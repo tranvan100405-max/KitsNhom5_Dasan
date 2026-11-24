@@ -17,11 +17,11 @@
 | **1** | Trang bìa: Firmware Rollout Platform | **D** | `15s` | Tên nhóm, 4 thành viên, DASAN Vietnam |
 | **2** | Xác định vấn đề, Mục tiêu, Ngoài phạm vi & Giả định | **D** | `35s` | Bối cảnh đề bài trang 2–3 |
 | **3** | Tác nhân, Ca sử dụng & Bảng thuật ngữ thống nhất | **A** | `40s` | `docs/member-a/SLIDE_03_ACTORS_AND_GLOSSARY.md` |
-| **4** | Mô hình miền dữ liệu (ERD) & Giải trình 5 câu hỏi Bước 1 | **A** | `65s` | `ERD/dasan_firmware_rollout.dbml` · `docs/member-a/ERD_DESIGN_QA.md` |
-| **5** | Tổng quan kiến trúc, Lập luận chọn Pull + Tách tải CDN | **B** | `45s` | `docs/member-b/DEVICE_AGENT_DESIGN.md` · `Spec §3.1` |
-| **6** | Luồng 1: Phát hành, Phê duyệt 4-mắt & Quy tắc tương thích | **A** | `45s` | `Sequence Diagram 1/` · `docs/member-a/FIRMWARE_COMPATIBILITY_MATRIX.md` |
+| **4** | Mô hình miền dữ liệu (ERD) & Giải trình 5 câu hỏi Bước 1 | **A** | `65s` | `diagrams/erd.dbml` · `docs/member-a/ERD_DESIGN_QA.md` |
+| **5** | Tổng quan kiến trúc, Lập luận chọn Pull + Tách tải CDN | **B** | `45s` | `diagrams/architecture.mmd` · `docs/member-b/DEVICE_AGENT_DESIGN.md` |
+| **6** | Luồng 1: Phát hành, Phê duyệt 4-mắt & Quy tắc tương thích | **A** | `45s` | `diagrams/sequence_release.mmd` · `docs/member-a/FIRMWARE_COMPATIBILITY_MATRIX.md` |
 | **7** | Luồng 2: Triển khai chiến dịch, Canary Wave & Slot tải | **C** | `55s` | `diagrams/sequence_campaign_rollout.drawio` · `Member_C_Deliverables.md` |
-| **8** | Hai máy trạng thái: Campaign *(Trái)* & Device Task *(Phải)* | **C + B** | `55s` (`25s+30s`) | `diagrams/campaign_state_machine.drawio` · `DEVICE_AGENT_DESIGN.md` |
+| **8** | Hai máy trạng thái: Campaign *(Trái)* & Device Task *(Phải)* | **C + B** | `55s` (`25s+30s`) | `diagrams/campaign_state_machine.drawio` · `diagrams/device_state_machine.mmd` |
 | **9** | Xử lý lỗi, Dual-Bank A/B, Auto-Pause & Emergency Rollback | **B + C** *(D góp 1 dòng)* | `65s` (`35s+30s`) | `DEVICE_AGENT_DESIGN.md` · `Member_C_Deliverables.md` · `EMERGENCY_ROLLBACK_DESIGN.md` |
 | **10** | Quy mô, Năng lực, Điểm nghẽn & Kịch bản mở rộng ×10 | **D** | `35s` | `docs/member-d/CAPACITY_ESTIMATION.md` · `capacity_calc.py` |
 | **11** | Bảo mật: Ma trận RBAC, Xác thực thiết bị HMAC & Audit Trail | **D** | `30s` | `docs/member-d/RBAC_SECURITY_AUDIT.md` |
@@ -188,7 +188,7 @@
 #### 1. Dấu ấn đóng góp rõ ràng của từng thành viên trên Git Repository
 | Thành viên | Nhánh / Thư mục chính | Sản phẩm thiết kế & Mã nguồn bàn giao cụ thể |
 | :--- | :--- | :--- |
-| **Thành viên A**<br>*(Domain & Data)* | `main` · `ERD/` · `Sequence Diagram 1/` · `docs/member-a/` | • Mô hình ERD chuẩn hóa 9 bảng (`dasan_firmware_rollout.dbml` + sơ đồ PNG/Mermaid) kèm `CHECK` 4-mắt & Partial Unique Index.<br>• Giải trình sâu 5 câu hỏi dữ liệu Bước 1, Luồng 1 Phát hành/Phê duyệt & Ma trận tương thích `versionCode`. |
+| **Thành viên A**<br>*(Domain & Data)* | `main` · `diagrams/` · `docs/member-a/` | • Mô hình ERD chuẩn hóa 9 bảng (`diagrams/erd.dbml` + `erd.mmd`/`erd.png`) kèm `CHECK` 4-mắt & Partial Unique Index.<br>• Giải trình sâu 5 câu hỏi dữ liệu Bước 1, Luồng 1 Phát hành/Phê duyệt (`diagrams/sequence_release.mmd`) & Ma trận tương thích `versionCode`. |
 | **Thành viên B**<br>*(Device & Protocol)* | `feature/tv-b-device` · `docs/member-b/` · `prototype/` | • Kiến trúc tổng quan, lập luận Pull + Jitter, Luồng Check-in, Máy trạng thái Device Task, Dual-Bank A/B & tính lũy đẳng.<br>• Đặc tả REST API (Slide 12) + **Prototype FastAPI & Device Simulator** chạy thực tế (tua nhanh ×60). |
 | **Thành viên C**<br>*(Campaign Engine)* | `diagrams/` · `DASAN_OJT1_Member_C_Deliverables.md` | • Luồng điều phối Canary Wave (`1%→10%→50%→100%`), chọn thiết bị trừ VIP, Máy trạng thái Campaign & Auto-Pause cơ học.<br>• Kiểm soát đồng thời 2 lớp (`Distributed Lock` + `Partial Unique Index`), Redis Semaphore, Observability (#11) & Maintenance Window (#14). |
 | **Thành viên D**<br>*(Scale, Security & AI)* | `feature/d` · `docs/member-d/` · `docs/prompt-log.md` | • Bảng tính Quy mô & kịch bản ×10 kiểm chứng bằng `capacity_calc.py`; Ma trận RBAC, HMAC vs JWT, `audit_logs` 5 lớp & Emergency Rollback (#13).<br>• Thiết kế AI Log Classifier, `validate_output.py`, thực nghiệm LLM thật (`prompt-log.md`), Mock Demo & điều phối 16 Slide. |

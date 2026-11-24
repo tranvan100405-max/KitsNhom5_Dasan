@@ -1,0 +1,28 @@
+stateDiagram-v2
+    [*] --> PENDING : [Campaign Engine] Task created for eligible device in wave
+    PENDING --> DOWNLOADING : [Server on Check-in] Wave RUNNING + in maintenanceWindow + slot acquired
+    PENDING --> TIMEOUT : [Timeout Sweeper] Wave past deadlineAt (WAVE_DEADLINE_EXCEEDED, no retry)
+    PENDING --> FAILED : [Server] Campaign ABORTED (CAMPAIGN_ABORTED) or INCOMPATIBLE (no retry)
+
+    DOWNLOADING --> INSTALLING : [Device /result] stage = DOWNLOADED/INSTALLING, SHA-256 valid (release slot)
+    DOWNLOADING --> FAILED : [Device /result] Network error / SHA-256 mismatch (release slot)
+    DOWNLOADING --> TIMEOUT : [Timeout Sweeper] > 15m without heartbeat (release slot)
+
+    INSTALLING --> VERIFYING : [Device /result] Flashed inactive Bank B + reboot initiated
+    INSTALLING --> FAILED : [Device /result] Flash write error
+    INSTALLING --> TIMEOUT : [Timeout Sweeper] > 10m without heartbeat
+
+    VERIFYING --> SUCCESS : [Device /result or Check-in Reconcile] Boot + self-test OK\n(atomic update currentFirmwareId + history)
+    VERIFYING --> ROLLED_BACK : [Bootloader Watchdog / Device] 3x boot-loop -> revert to Bank A\n(no auto-retry)
+    VERIFYING --> TIMEOUT : [Timeout Sweeper] > 5m post-reboot silence
+
+    FAILED --> PENDING : [Server] Retry remaining (attemptCount < 3, backoff 1m -> 5m -> 15m)
+    TIMEOUT --> PENDING : [Server] Retry remaining (attemptCount < 3, backoff 1m -> 5m -> 15m)
+
+    TIMEOUT --> SUCCESS : [Server Reconcile] Late check-in already running target firmware
+    TIMEOUT --> ROLLED_BACK : [Device Late Report] Watchdog reverted to Bank A
+
+    SUCCESS --> [*]
+    ROLLED_BACK --> [*]
+    FAILED --> [*] : Retry budget exhausted (attemptCount = 3) or CAMPAIGN_ABORTED
+    TIMEOUT --> [*] : Retry budget exhausted (attemptCount = 3) or WAVE_DEADLINE_EXCEEDED

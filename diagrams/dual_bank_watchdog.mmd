@@ -1,0 +1,10 @@
+stateDiagram-v2
+    direction LR
+    [*] --> RunningBankA : Active on Bank A (old verified firmware)
+    RunningBankA --> FlashingBankB : Download & write new firmware to Bank B\n(Bank A untouched - power loss safe)
+    FlashingBankB --> TrialBootBankB : Set boot_try = 1, reboot into Bank B
+    TrialBootBankB --> RunningBankB : OS + Agent + WAN self-test OK -> mark Bank B active
+    TrialBootBankB --> TrialBootBankB : Crash / Kernel panic -> Hardware Watchdog resets (boot_try < 3)
+    TrialBootBankB --> RevertedBankA : boot_try == 3 -> Bootloader automatically switches back to Bank A
+    RunningBankB --> [*] : Report stage = SUCCESS
+    RevertedBankA --> [*] : Service restored on Bank A -> Report stage = ROLLED_BACK

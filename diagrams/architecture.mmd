@@ -1,0 +1,64 @@
+flowchart TB
+    subgraph Actors["1. Users & Edge Fleet"]
+        DEV["Developer"]
+        QA["QA Engineer"]
+        OP["Operator"]
+        ADM["System Admin"]
+        EDGE["100,000 Edge Devices<br/>(ONT / ONU / Switch / Router)<br/>Dual-Bank A/B + Watchdog"]
+    end
+
+    subgraph PortalAndCDN["2. Web UI & Edge Delivery Layer"]
+        WEB["Admin Web Portal"]
+        CDN["Multi-PoP ISP CDN<br/>(20 Gbps Egress Offload)"]
+    end
+
+    subgraph GatewayAndAPI["3. API Gateway & Stateless Services"]
+        GW["API Gateway / Reverse Proxy<br/>(TLS Resumption + Rate Limit)"]
+        ADMSVC["Admin & Campaign Service<br/>(Four-Eyes, Eligibility, Rollout)"]
+        INGSVC["Device Ingestion Service<br/>(Stateless Autoscale: Check-in & Result)"]
+    end
+
+    subgraph AsyncWorkers["4. Asynchronous Workers"]
+        SWEEP["Timeout Sweeper Worker<br/>(15m / 10m / 5m + Wave Deadline)"]
+        CAMPW["Campaign Promotion &<br/>Auto-Pause Worker (30s loop)"]
+        AIW["AI Classifier Worker<br/>(Read-Only Async + Validator)"]
+    end
+
+    subgraph DataStores["5. Persistence, Cache & Object Storage"]
+        PG[("PostgreSQL Primary DB<br/>(9 Tables, CHECK, Partial UK)")]
+        KMS[("Device Credentials / KMS<br/>(Isolated HMAC Secrets)")]
+        REDIS[("Redis Store<br/>(sem:campaign:{id}, Nonce,<br/>Locks, Batch Check-in)")]
+        S3[("Object Storage<br/>(S3 / MinIO Firmware .bin)")]
+        LLM[["External LLM API<br/>(JSON Schema Mode)"]]
+    end
+
+    DEV & QA & OP & ADM -->|"HTTPS"| WEB
+    WEB -->|"REST + JWT (RBAC)"| GW
+    GW -->|"/api/firmware, /campaigns, /audit-logs"| ADMSVC
+
+    EDGE -->|"PULL POST /check-in & /result<br/>(300s + Phase Offset / Jitter + HMAC)"| GW
+    GW -->|"/api/device-agent/*"| INGSVC
+
+    ADMSVC -->|"Upload .bin & Verify SHA-256"| S3
+    ADMSVC -->|"CRUD + Audit Trail"| PG
+    ADMSVC -->|"Distributed Lock(targetGroupId)"| REDIS
+
+    INGSVC -->|"Verify Secret"| KMS
+    INGSVC -->|"Nonce Check, Acquire/Release Slot,<br/>Buffer lastCheckInAt"| REDIS
+    INGSVC -->|"Task Transition & History (ACID)"| PG
+    INGSVC -.->|"Issue Pre-signed URL (TTL 15m)"| EDGE
+
+    EDGE -->|"Direct HTTPS GET Firmware (~50MB)"| CDN
+    CDN -->|"Origin Pull (Cache Miss Only)"| S3
+
+    SWEEP -->|"Scan lastHeartbeatAt & Flush Check-in"| PG
+    SWEEP -->|"Reclaim Leaked Slots"| REDIS
+
+    CAMPW -->|"Evaluate Wave Rate (N >= 50) & Soak Time"| PG
+    CAMPW -->|"Trigger PAUSED / Wave COMPLETED Job"| REDIS
+
+    REDIS -->|"Async Job"| AIW
+    PG -->|"Read Aggregated errorGroups[]"| AIW
+    AIW -->|"Anonymized INPUT_JSON"| LLM
+    LLM -->|"Validated Suggestion JSON"| AIW
+    AIW -->|"Save Advisory Only"| PG

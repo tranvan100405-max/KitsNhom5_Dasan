@@ -1,0 +1,13 @@
+stateDiagram-v2
+    [*] --> DRAFT : [Operator] POST /api/campaigns
+    DRAFT --> SCHEDULED : [Operator] Schedule rollout time
+    SCHEDULED --> DRAFT : [Operator] Cancel schedule
+    DRAFT --> RUNNING : [Operator] PATCH /start
+    SCHEDULED --> RUNNING : [System Scheduler] scheduledAt reached
+    RUNNING --> PAUSED : [Auto-Pause Worker] Wave FailureRate > Threshold (N >= 50)\nOR [Operator] PATCH /pause
+    PAUSED --> RUNNING : [Operator] PATCH /resume after investigation
+    RUNNING --> COMPLETED : [Wave Worker] Final Wave COMPLETED\n(all tasks terminal or past deadlineAt)
+    RUNNING --> ABORTED : [Operator] PATCH /abort\n(unstarted PENDING -> FAILED: CAMPAIGN_ABORTED)
+    PAUSED --> ABORTED : [Operator] PATCH /abort\n(unstarted PENDING -> FAILED: CAMPAIGN_ABORTED)
+    COMPLETED --> [*]
+    ABORTED --> [*]

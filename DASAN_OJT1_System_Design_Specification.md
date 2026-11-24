@@ -19,7 +19,7 @@
 
 ## 2. THIẾT KẾ DỮ LIỆU (ERD) & GIẢI TRÌNH BƯỚC 1
 
-### 2.1. Cấu trúc bảng dữ liệu chuẩn hóa (Đồng bộ với `ERD/dasan_firmware_rollout.dbml`)
+### 2.1. Cấu trúc bảng dữ liệu chuẩn hóa (Đồng bộ với `diagrams/erd.dbml`)
 
 ```mermaid
 erDiagram
