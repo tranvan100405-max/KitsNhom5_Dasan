@@ -1,0 +1,284 @@
+<mxfile host="app.diagrams.net" agent="Antigravity">
+  <diagram id="seq-campaign-rollout" name="Sequence - Campaign Rollout">
+    <mxGraphModel dx="2189" dy="1264" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1966" pageHeight="1303" background="#ffffff" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="ll_11" edge="1" parent="1" style="endArrow=none;dashed=1;dashPattern=4 4;html=1;strokeColor=#000000;strokeWidth=1;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="90" y="90" as="sourcePoint" />
+            <mxPoint x="90" y="1268" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="actor_12" parent="1" style="shape=image;verticalLabelPosition=bottom;verticalAlign=top;imageAspect=1;aspect=fixed;image=data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2236%22%20height%3D%2236%22%20viewBox%3D%220%200%2036%2036%22%3E%3Ccircle%20cx%3D%2218%22%20cy%3D%2218%22%20r%3D%2216.5%22%20fill%3D%22%23ffffff%22%20stroke%3D%22%23000000%22%20stroke-width%3D%221.2%22/%3E%3Ccircle%20cx%3D%2218%22%20cy%3D%2213%22%20r%3D%224.8%22%20fill%3D%22none%22%20stroke%3D%22%23000000%22%20stroke-width%3D%221.2%22/%3E%3Cpath%20d%3D%22M8.5%2029%20C10%2021.5%2C%2026%2021.5%2C%2027.5%2029%22%20fill%3D%22none%22%20stroke%3D%22%23000000%22%20stroke-width%3D%221.2%22%20stroke-linecap%3D%22round%22/%3E%3C/svg%3E;fontFamily=Segoe UI,Helvetica,Arial,sans-serif;fontSize=12;fontStyle=1;fontColor=#000000;spacingTop=4;" value="Operator" vertex="1">
+          <mxGeometry height="36" width="36" x="72" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="ll_13" edge="1" parent="1" style="endArrow=none;dashed=1;dashPattern=4 4;html=1;strokeColor=#000000;strokeWidth=1;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="592" y="72" as="sourcePoint" />
+            <mxPoint x="592" y="1268" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="part_14" parent="1" style="rounded=1;arcSize=10;whiteSpace=nowrap;html=1;fillColor=#ffffff;strokeColor=#000000;strokeWidth=1;fontFamily=Segoe UI,Helvetica,Arial,sans-serif;fontSize=12;fontStyle=1;fontColor=#000000;" value="Admin API / Campaign Service" vertex="1">
+          <mxGeometry height="42" width="225" x="480" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="ll_15" edge="1" parent="1" style="endArrow=none;dashed=1;dashPattern=4 4;html=1;strokeColor=#000000;strokeWidth=1;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1063" y="72" as="sourcePoint" />
+            <mxPoint x="1063" y="1268" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="part_16" parent="1" style="rounded=1;arcSize=10;whiteSpace=nowrap;html=1;fillColor=#ffffff;strokeColor=#000000;strokeWidth=1;fontFamily=Segoe UI,Helvetica,Arial,sans-serif;fontSize=12;fontStyle=1;fontColor=#000000;" value="&amp;nbsp;Database" vertex="1">
+          <mxGeometry height="42" width="175" x="976" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="ll_17" edge="1" parent="1" style="endArrow=none;dashed=1;dashPattern=4 4;html=1;strokeColor=#000000;strokeWidth=1;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1301" y="72" as="sourcePoint" />
+            <mxPoint x="1301" y="1268" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="part_18" parent="1" style="rounded=1;arcSize=10;whiteSpace=nowrap;html=1;fillColor=#ffffff;strokeColor=#000000;strokeWidth=1;fontFamily=Segoe UI,Helvetica,Arial,sans-serif;fontSize=12;fontStyle=1;fontColor=#000000;" value="Redis (Locks &amp; Semaphore)" vertex="1">
+          <mxGeometry height="42" width="205" x="1199" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="ll_19" edge="1" parent="1" style="endArrow=none;dashed=1;dashPattern=4 4;html=1;strokeColor=#000000;strokeWidth=1;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1560" y="72" as="sourcePoint" />
+            <mxPoint x="1560" y="1268" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="part_20" parent="1" style="rounded=1;arcSize=10;whiteSpace=nowrap;html=1;fillColor=#ffffff;strokeColor=#000000;strokeWidth=1;fontFamily=Segoe UI,Helvetica,Arial,sans-serif;fontSize=12;fontStyle=1;fontColor=#000000;" value="Campaign Worker / Scheduler" vertex="1">
+          <mxGeometry height="42" width="218" x="1451" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="ll_21" edge="1" parent="1" style="endArrow=none;dashed=1;dashPattern=4 4;html=1;strokeColor=#000000;strokeWidth=1;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1812" y="72" as="sourcePoint" />
+            <mxPoint x="1812" y="1268" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="part_22" parent="1" style="rounded=1;arcSize=10;whiteSpace=nowrap;html=1;fillColor=#ffffff;strokeColor=#000000;strokeWidth=1;fontFamily=Segoe UI,Helvetica,Arial,sans-serif;fontSize=12;fontStyle=1;fontColor=#000000;" value="Device Agent (100k ONTs)" vertex="1">
+          <mxGeometry height="42" width="198" x="1713" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="frame_23" parent="1" style="shape=umlFrame;whiteSpace=nowrap;html=1;pointerEvents=0;recursiveResize=0;container=0;collapsible=0;width=491;height=24;fillColor=none;strokeColor=#000000;strokeWidth=1;fontColor=#000000;fontFamily=Segoe UI,Helvetica,Arial,sans-serif;fontSize=11;fontStyle=0;align=left;verticalAlign=top;spacingLeft=6;spacingTop=2;" value="alt [Còn slot tải &amp; Trong khung bảo trì &amp; Thiết bị thuộc Wave đang RUNNING]" vertex="1">
+          <mxGeometry height="204" width="1296" x="554" y="659" as="geometry" />
+        </mxCell>
+        <mxCell id="div_24" edge="1" parent="1" style="endArrow=none;dashed=1;dashPattern=4 4;html=1;strokeColor=#000000;strokeWidth=1;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="554" y="785" as="sourcePoint" />
+            <mxPoint x="1850" y="785" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="else_lbl_25" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontFamily=Segoe UI,Helvetica,Arial,sans-serif;fontSize=11;fontStyle=0;fontColor=#000000;" value="[Hết slot tải / Ngoài khung bảo trì / Chưa tới lượt]" vertex="1">
+          <mxGeometry height="20" width="342" x="562" y="788" as="geometry" />
+        </mxCell>
+        <mxCell id="frame_26" parent="1" style="shape=umlFrame;whiteSpace=nowrap;html=1;pointerEvents=0;recursiveResize=0;container=0;collapsible=0;width=404;height=24;fillColor=none;strokeColor=#000000;strokeWidth=1;fontColor=#000000;fontFamily=Segoe UI,Helvetica,Arial,sans-serif;fontSize=11;fontStyle=0;align=left;verticalAlign=top;spacingLeft=6;spacingTop=2;" value="loop [Chu kỳ Check-in của thiết bị (mỗi 5 phút ± 30s Jitter)]" vertex="1">
+          <mxGeometry height="394" width="1330" x="537" y="529" as="geometry" />
+        </mxCell>
+        <mxCell id="frame_27" parent="1" style="shape=umlFrame;whiteSpace=nowrap;html=1;pointerEvents=0;recursiveResize=0;container=0;collapsible=0;width=484;height=24;fillColor=none;strokeColor=#000000;strokeWidth=1;fontColor=#000000;fontFamily=Segoe UI,Helvetica,Arial,sans-serif;fontSize=11;fontStyle=0;align=left;verticalAlign=top;spacingLeft=6;spacingTop=2;" value="alt [Đạt ngưỡng (Success Rate &gt;= 95%) &amp; Đủ Soak Time / Hết hạn deadlineAt]" vertex="1">
+          <mxGeometry height="204" width="1560" x="45" y="1029" as="geometry" />
+        </mxCell>
+        <mxCell id="div_28" edge="1" parent="1" style="endArrow=none;dashed=1;dashPattern=4 4;html=1;strokeColor=#000000;strokeWidth=1;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="45" y="1111" as="sourcePoint" />
+            <mxPoint x="1605" y="1111" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="else_lbl_29" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontFamily=Segoe UI,Helvetica,Arial,sans-serif;fontSize=11;fontStyle=0;fontColor=#000000;" value="[Tỷ lệ lỗi vượt failureThresholdPercent (ví dụ &gt; 5%)]" vertex="1">
+          <mxGeometry height="20" width="348" x="53" y="1114" as="geometry" />
+        </mxCell>
+        <mxCell id="msg_30" edge="1" parent="1" style="endArrow=block;endFill=1;endSize=5;html=1;strokeWidth=1;strokeColor=#000000;fontFamily=Segoe UI,Helvetica,Arial,sans-serif;fontSize=11;fontStyle=0;fontColor=#000000;align=center;verticalAlign=bottom;labelBackgroundColor=none;whiteSpace=nowrap;" value="POST /api/campaigns (firmwareId, targetGroupId, waves, failureThreshold)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-5" as="offset" />
+            <mxPoint x="99" y="135" as="sourcePoint" />
+            <mxPoint x="592" y="135" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="num_31" parent="1" style="ellipse;whiteSpace=nowrap;html=1;aspect=fixed;fillColor=#000000;strokeColor=#000000;fontColor=#ffffff;fontFamily=Segoe UI,Helvetica,Arial,sans-serif;fontSize=10;fontStyle=1;" value="1" vertex="1">
+          <mxGeometry height="18" width="18" x="81" y="126" as="geometry" />
+        </mxCell>
+        <mxCell id="msg_32" edge="1" parent="1" style="endArrow=block;endFill=1;endSize=5;html=1;strokeWidth=1;strokeColor=#000000;fontFamily=Segoe UI,Helvetica,Arial,sans-serif;fontSize=11;fontStyle=0;fontColor=#000000;align=center;verticalAlign=bottom;labelBackgroundColor=none;whiteSpace=nowrap;" value="Lưu Campaign (DRAFT) &amp; campaign_waves (PENDING: 1%, 10%, 50%, 100%)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-5" as="offset" />
+            <mxPoint x="601" y="179" as="sourcePoint" />
+            <mxPoint x="1063" y="179" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="num_33" parent="1" style="ellipse;whiteSpace=nowrap;html=1;aspect=fixed;fillColor=#000000;strokeColor=#000000;fontColor=#ffffff;fontFamily=Segoe UI,Helvetica,Arial,sans-serif;fontSize=10;fontStyle=1;" value="2" vertex="1">
+          <mxGeometry height="18" width="18" x="583" y="170" as="geometry" />
+        </mxCell>
+        <mxCell id="msg_34" edge="1" parent="1" style="endArrow=block;endFill=1;endSize=5;dashed=1;dashPattern=5 4;html=1;strokeWidth=1;strokeColor=#000000;fontFamily=Segoe UI,Helvetica,Arial,sans-serif;fontSize=11;fontStyle=0;fontColor=#000000;align=center;verticalAlign=bottom;labelBackgroundColor=none;whiteSpace=nowrap;" value="201 Created (campaignId)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-5" as="offset" />
+            <mxPoint x="583" y="223" as="sourcePoint" />
+            <mxPoint x="90" y="223" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="num_35" parent="1" style="ellipse;whiteSpace=nowrap;html=1;aspect=fixed;fillColor=#000000;strokeColor=#000000;fontColor=#ffffff;fontFamily=Segoe UI,Helvetica,Arial,sans-serif;fontSize=10;fontStyle=1;" value="3" vertex="1">
+          <mxGeometry height="18" width="18" x="583" y="214" as="geometry" />
+        </mxCell>
+        <mxCell id="msg_36" edge="1" parent="1" style="endArrow=block;endFill=1;endSize=5;html=1;strokeWidth=1;strokeColor=#000000;fontFamily=Segoe UI,Helvetica,Arial,sans-serif;fontSize=11;fontStyle=0;fontColor=#000000;align=center;verticalAlign=bottom;labelBackgroundColor=none;whiteSpace=nowrap;" value="PATCH /api/campaigns/{id}/start">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-5" as="offset" />
+            <mxPoint x="99" y="267" as="sourcePoint" />
+            <mxPoint x="592" y="267" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="num_37" parent="1" style="ellipse;whiteSpace=nowrap;html=1;aspect=fixed;fillColor=#000000;strokeColor=#000000;fontColor=#ffffff;fontFamily=Segoe UI,Helvetica,Arial,sans-serif;fontSize=10;fontStyle=1;" value="4" vertex="1">
+          <mxGeometry height="18" width="18" x="81" y="258" as="geometry" />
+        </mxCell>
+        <mxCell id="msg_38" edge="1" parent="1" style="endArrow=block;endFill=1;endSize=5;html=1;strokeWidth=1;strokeColor=#000000;fontFamily=Segoe UI,Helvetica,Arial,sans-serif;fontSize=11;fontStyle=0;fontColor=#000000;align=center;verticalAlign=bottom;labelBackgroundColor=none;whiteSpace=nowrap;" value="Acquire Distributed Lock (Lock targetGroupId)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-5" as="offset" />
+            <mxPoint x="601" y="311" as="sourcePoint" />
+            <mxPoint x="1301" y="311" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="num_39" parent="1" style="ellipse;whiteSpace=nowrap;html=1;aspect=fixed;fillColor=#000000;strokeColor=#000000;fontColor=#ffffff;fontFamily=Segoe UI,Helvetica,Arial,sans-serif;fontSize=10;fontStyle=1;" value="5" vertex="1">
+          <mxGeometry height="18" width="18" x="583" y="302" as="geometry" />
+        </mxCell>
+        <mxCell id="msg_40" edge="1" parent="1" style="endArrow=block;endFill=1;endSize=5;html=1;strokeWidth=1;strokeColor=#000000;fontFamily=Segoe UI,Helvetica,Arial,sans-serif;fontSize=11;fontStyle=0;fontColor=#000000;align=center;verticalAlign=bottom;labelBackgroundColor=none;whiteSpace=nowrap;" value="Kiểm tra thiết bị đủ điều kiện (Model, &gt;= minVersionCode)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-5" as="offset" />
+            <mxPoint x="601" y="355" as="sourcePoint" />
+            <mxPoint x="1063" y="355" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="num_41" parent="1" style="ellipse;whiteSpace=nowrap;html=1;aspect=fixed;fillColor=#000000;strokeColor=#000000;fontColor=#ffffff;fontFamily=Segoe UI,Helvetica,Arial,sans-serif;fontSize=10;fontStyle=1;" value="6" vertex="1">
+          <mxGeometry height="18" width="18" x="583" y="346" as="geometry" />
+        </mxCell>
+        <mxCell id="msg_42" edge="1" parent="1" style="endArrow=block;endFill=1;endSize=5;html=1;strokeWidth=1;strokeColor=#000000;fontFamily=Segoe UI,Helvetica,Arial,sans-serif;fontSize=11;fontStyle=0;fontColor=#000000;align=center;verticalAlign=bottom;labelBackgroundColor=none;whiteSpace=nowrap;" value="Tạo hàng loạt bản ghi device_tasks (status=PENDING, waveId=Wave_1)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-5" as="offset" />
+            <mxPoint x="601" y="399" as="sourcePoint" />
+            <mxPoint x="1063" y="399" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="num_43" parent="1" style="ellipse;whiteSpace=nowrap;html=1;aspect=fixed;fillColor=#000000;strokeColor=#000000;fontColor=#ffffff;fontFamily=Segoe UI,Helvetica,Arial,sans-serif;fontSize=10;fontStyle=1;" value="7" vertex="1">
+          <mxGeometry height="18" width="18" x="583" y="390" as="geometry" />
+        </mxCell>
+        <mxCell id="msg_44" edge="1" parent="1" style="endArrow=block;endFill=1;endSize=5;html=1;strokeWidth=1;strokeColor=#000000;fontFamily=Segoe UI,Helvetica,Arial,sans-serif;fontSize=11;fontStyle=0;fontColor=#000000;align=center;verticalAlign=bottom;labelBackgroundColor=none;whiteSpace=nowrap;" value="Đổi Campaign.status = RUNNING, Wave_1.status = RUNNING">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-5" as="offset" />
+            <mxPoint x="601" y="443" as="sourcePoint" />
+            <mxPoint x="1063" y="443" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="num_45" parent="1" style="ellipse;whiteSpace=nowrap;html=1;aspect=fixed;fillColor=#000000;strokeColor=#000000;fontColor=#ffffff;fontFamily=Segoe UI,Helvetica,Arial,sans-serif;fontSize=10;fontStyle=1;" value="8" vertex="1">
+          <mxGeometry height="18" width="18" x="583" y="434" as="geometry" />
+        </mxCell>
+        <mxCell id="msg_46" edge="1" parent="1" style="endArrow=block;endFill=1;endSize=5;dashed=1;dashPattern=5 4;html=1;strokeWidth=1;strokeColor=#000000;fontFamily=Segoe UI,Helvetica,Arial,sans-serif;fontSize=11;fontStyle=0;fontColor=#000000;align=center;verticalAlign=bottom;labelBackgroundColor=none;whiteSpace=nowrap;" value="200 OK (Chiến dịch bắt đầu Wave 1: 1%)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-5" as="offset" />
+            <mxPoint x="583" y="487" as="sourcePoint" />
+            <mxPoint x="90" y="487" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="num_47" parent="1" style="ellipse;whiteSpace=nowrap;html=1;aspect=fixed;fillColor=#000000;strokeColor=#000000;fontColor=#ffffff;fontFamily=Segoe UI,Helvetica,Arial,sans-serif;fontSize=10;fontStyle=1;" value="9" vertex="1">
+          <mxGeometry height="18" width="18" x="583" y="478" as="geometry" />
+        </mxCell>
+        <mxCell id="msg_48" edge="1" parent="1" style="endArrow=block;endFill=1;endSize=5;html=1;strokeWidth=1;strokeColor=#000000;fontFamily=Segoe UI,Helvetica,Arial,sans-serif;fontSize=11;fontStyle=0;fontColor=#000000;align=center;verticalAlign=bottom;labelBackgroundColor=none;whiteSpace=nowrap;" value="POST /api/device-agent/check-in">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-5" as="offset" />
+            <mxPoint x="1803" y="573" as="sourcePoint" />
+            <mxPoint x="592" y="573" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="num_49" parent="1" style="ellipse;whiteSpace=nowrap;html=1;aspect=fixed;fillColor=#000000;strokeColor=#000000;fontColor=#ffffff;fontFamily=Segoe UI,Helvetica,Arial,sans-serif;fontSize=10;fontStyle=1;" value="10" vertex="1">
+          <mxGeometry height="18" width="18" x="1803" y="564" as="geometry" />
+        </mxCell>
+        <mxCell id="msg_50" edge="1" parent="1" style="endArrow=block;endFill=1;endSize=5;html=1;strokeWidth=1;strokeColor=#000000;fontFamily=Segoe UI,Helvetica,Arial,sans-serif;fontSize=11;fontStyle=0;fontColor=#000000;align=center;verticalAlign=bottom;labelBackgroundColor=none;whiteSpace=nowrap;" value="Kiểm tra maintenanceWindow &amp; xin slot tải sem:campaign:{id} (&lt; maxConcurrentDevices?)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-5" as="offset" />
+            <mxPoint x="601" y="617" as="sourcePoint" />
+            <mxPoint x="1301" y="617" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="num_51" parent="1" style="ellipse;whiteSpace=nowrap;html=1;aspect=fixed;fillColor=#000000;strokeColor=#000000;fontColor=#ffffff;fontFamily=Segoe UI,Helvetica,Arial,sans-serif;fontSize=10;fontStyle=1;" value="11" vertex="1">
+          <mxGeometry height="18" width="18" x="583" y="608" as="geometry" />
+        </mxCell>
+        <mxCell id="msg_52" edge="1" parent="1" style="endArrow=block;endFill=1;endSize=5;html=1;strokeWidth=1;strokeColor=#000000;fontFamily=Segoe UI,Helvetica,Arial,sans-serif;fontSize=11;fontStyle=0;fontColor=#000000;align=center;verticalAlign=bottom;labelBackgroundColor=none;whiteSpace=nowrap;" value="Đổi device_tasks.status = DOWNLOADING">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-5" as="offset" />
+            <mxPoint x="601" y="703" as="sourcePoint" />
+            <mxPoint x="1063" y="703" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="num_53" parent="1" style="ellipse;whiteSpace=nowrap;html=1;aspect=fixed;fillColor=#000000;strokeColor=#000000;fontColor=#ffffff;fontFamily=Segoe UI,Helvetica,Arial,sans-serif;fontSize=10;fontStyle=1;" value="12" vertex="1">
+          <mxGeometry height="18" width="18" x="583" y="694" as="geometry" />
+        </mxCell>
+        <mxCell id="msg_54" edge="1" parent="1" style="endArrow=block;endFill=1;endSize=5;dashed=1;dashPattern=5 4;html=1;strokeWidth=1;strokeColor=#000000;fontFamily=Segoe UI,Helvetica,Arial,sans-serif;fontSize=11;fontStyle=0;fontColor=#000000;align=center;verticalAlign=bottom;labelBackgroundColor=none;whiteSpace=nowrap;" value="Trả về Task (Pre-signed URL, Checksum SHA-256)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-5" as="offset" />
+            <mxPoint x="601" y="747" as="sourcePoint" />
+            <mxPoint x="1812" y="747" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="num_55" parent="1" style="ellipse;whiteSpace=nowrap;html=1;aspect=fixed;fillColor=#000000;strokeColor=#000000;fontColor=#ffffff;fontFamily=Segoe UI,Helvetica,Arial,sans-serif;fontSize=10;fontStyle=1;" value="13" vertex="1">
+          <mxGeometry height="18" width="18" x="583" y="738" as="geometry" />
+        </mxCell>
+        <mxCell id="msg_56" edge="1" parent="1" style="endArrow=block;endFill=1;endSize=5;dashed=1;dashPattern=5 4;html=1;strokeWidth=1;strokeColor=#000000;fontFamily=Segoe UI,Helvetica,Arial,sans-serif;fontSize=11;fontStyle=0;fontColor=#000000;align=center;verticalAlign=bottom;labelBackgroundColor=none;whiteSpace=nowrap;" value="200 OK (&quot;NO_TASK&quot;)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-5" as="offset" />
+            <mxPoint x="601" y="823" as="sourcePoint" />
+            <mxPoint x="1812" y="823" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="num_57" parent="1" style="ellipse;whiteSpace=nowrap;html=1;aspect=fixed;fillColor=#000000;strokeColor=#000000;fontColor=#ffffff;fontFamily=Segoe UI,Helvetica,Arial,sans-serif;fontSize=10;fontStyle=1;" value="14" vertex="1">
+          <mxGeometry height="18" width="18" x="583" y="814" as="geometry" />
+        </mxCell>
+        <mxCell id="msg_58" edge="1" parent="1" style="endArrow=block;endFill=1;endSize=5;html=1;strokeWidth=1;strokeColor=#000000;fontFamily=Segoe UI,Helvetica,Arial,sans-serif;fontSize=11;fontStyle=0;fontColor=#000000;align=center;verticalAlign=bottom;labelBackgroundColor=none;whiteSpace=nowrap;" value="POST /api/device-agent/tasks/{taskId}/result (stage=INSTALLING -&gt; trả slot; cuối: SUCCESS / FAILED)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-5" as="offset" />
+            <mxPoint x="1803" y="883" as="sourcePoint" />
+            <mxPoint x="592" y="883" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="num_59" parent="1" style="ellipse;whiteSpace=nowrap;html=1;aspect=fixed;fillColor=#000000;strokeColor=#000000;fontColor=#ffffff;fontFamily=Segoe UI,Helvetica,Arial,sans-serif;fontSize=10;fontStyle=1;" value="15" vertex="1">
+          <mxGeometry height="18" width="18" x="1803" y="874" as="geometry" />
+        </mxCell>
+        <mxCell id="note_60" parent="1" style="shape=note;size=8;whiteSpace=nowrap;html=1;backgroundOutline=1;fillColor=#ffffff;strokeColor=#000000;strokeWidth=1;fontColor=#000000;fontFamily=Segoe UI,Helvetica,Arial,sans-serif;fontSize=11;fontStyle=0;align=center;verticalAlign=middle;" value="Background Worker quét định kỳ (mỗi 30s)" vertex="1">
+          <mxGeometry height="28" width="280" x="1171" y="939" as="geometry" />
+        </mxCell>
+        <mxCell id="msg_61" edge="1" parent="1" style="endArrow=block;endFill=1;endSize=5;html=1;strokeWidth=1;strokeColor=#000000;fontFamily=Segoe UI,Helvetica,Arial,sans-serif;fontSize=11;fontStyle=0;fontColor=#000000;align=center;verticalAlign=bottom;labelBackgroundColor=none;whiteSpace=nowrap;" value="Quét Timeout, deadlineAt &amp; tính FailureRate của Wave 1 (cỡ mẫu N &gt;= 50)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-5" as="offset" />
+            <mxPoint x="1551" y="987" as="sourcePoint" />
+            <mxPoint x="1063" y="987" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="num_62" parent="1" style="ellipse;whiteSpace=nowrap;html=1;aspect=fixed;fillColor=#000000;strokeColor=#000000;fontColor=#ffffff;fontFamily=Segoe UI,Helvetica,Arial,sans-serif;fontSize=10;fontStyle=1;" value="16" vertex="1">
+          <mxGeometry height="18" width="18" x="1551" y="978" as="geometry" />
+        </mxCell>
+        <mxCell id="msg_63" edge="1" parent="1" style="endArrow=block;endFill=1;endSize=5;html=1;strokeWidth=1;strokeColor=#000000;fontFamily=Segoe UI,Helvetica,Arial,sans-serif;fontSize=11;fontStyle=0;fontColor=#000000;align=center;verticalAlign=bottom;labelBackgroundColor=none;whiteSpace=nowrap;" value="Đổi Wave_1 = COMPLETED, Kích hoạt Wave_2 (10%)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-5" as="offset" />
+            <mxPoint x="1551" y="1073" as="sourcePoint" />
+            <mxPoint x="1063" y="1073" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="num_64" parent="1" style="ellipse;whiteSpace=nowrap;html=1;aspect=fixed;fillColor=#000000;strokeColor=#000000;fontColor=#ffffff;fontFamily=Segoe UI,Helvetica,Arial,sans-serif;fontSize=10;fontStyle=1;" value="17" vertex="1">
+          <mxGeometry height="18" width="18" x="1551" y="1064" as="geometry" />
+        </mxCell>
+        <mxCell id="msg_65" edge="1" parent="1" style="endArrow=block;endFill=1;endSize=5;html=1;strokeWidth=1;strokeColor=#000000;fontFamily=Segoe UI,Helvetica,Arial,sans-serif;fontSize=11;fontStyle=0;fontColor=#000000;align=center;verticalAlign=bottom;labelBackgroundColor=none;whiteSpace=nowrap;" value="Đổi Campaign.status = PAUSED, Wave.status = PAUSED (+ ghi audit_logs)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-5" as="offset" />
+            <mxPoint x="1551" y="1149" as="sourcePoint" />
+            <mxPoint x="1063" y="1149" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="num_66" parent="1" style="ellipse;whiteSpace=nowrap;html=1;aspect=fixed;fillColor=#000000;strokeColor=#000000;fontColor=#ffffff;fontFamily=Segoe UI,Helvetica,Arial,sans-serif;fontSize=10;fontStyle=1;" value="18" vertex="1">
+          <mxGeometry height="18" width="18" x="1551" y="1140" as="geometry" />
+        </mxCell>
+        <mxCell id="msg_67" edge="1" parent="1" style="endArrow=block;endFill=1;endSize=5;dashed=1;dashPattern=5 4;html=1;strokeWidth=1;strokeColor=#000000;fontFamily=Segoe UI,Helvetica,Arial,sans-serif;fontSize=11;fontStyle=0;fontColor=#000000;align=center;verticalAlign=bottom;labelBackgroundColor=none;whiteSpace=nowrap;" value="Gửi Webhook / Email cảnh báo Operator!">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-5" as="offset" />
+            <mxPoint x="1551" y="1193" as="sourcePoint" />
+            <mxPoint x="90" y="1193" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="num_68" parent="1" style="ellipse;whiteSpace=nowrap;html=1;aspect=fixed;fillColor=#000000;strokeColor=#000000;fontColor=#ffffff;fontFamily=Segoe UI,Helvetica,Arial,sans-serif;fontSize=10;fontStyle=1;" value="19" vertex="1">
+          <mxGeometry height="18" width="18" x="1551" y="1184" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

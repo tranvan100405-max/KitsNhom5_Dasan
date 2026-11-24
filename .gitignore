@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+
+# DB giả lập sinh ra khi chạy prototype
+*.db
+*.db-journal
+
+# Bí mật
+.env
+
+# Test của prototype (không đưa lên repo)
+prototype/tests/
+prototype/pytest.ini

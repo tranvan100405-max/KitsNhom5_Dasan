@@ -1,0 +1,50 @@
+sequenceDiagram
+    autonumber
+    actor OP as Operator
+    participant API as Admin & Campaign Service
+    participant RD as Redis (Lock & Semaphore)
+    participant DB as PostgreSQL Database
+    participant DEV as Edge Device Agent
+    participant CDN as Object Storage + CDN
+    participant WK as Campaign & Auto-Pause Worker
+
+    OP->>API: POST /api/campaigns (firmwareId, targetGroupId, waves 1/10/50/100%, threshold)
+    API->>DB: Verify firmware status = APPROVED; INSERT campaigns (DRAFT) & campaign_waves (PENDING)
+    API-->>OP: 201 Created
+
+    OP->>API: PATCH /api/campaigns/{id}/start
+    API->>RD: Acquire Distributed Lock(targetGroupId)
+    API->>DB: Select eligible devices (model match, minRequiredVersionCode <= ver < target, no active task)
+    API->>DB: Batch INSERT device_tasks (PENDING, assigned to Wave 1..4; Wave 1 excludes VIP)
+    API->>DB: UPDATE campaign = RUNNING, Wave 1 = RUNNING (deadlineAt = startedAt + 24h) + audit_logs
+    API->>RD: Init sem:campaign:{id} = maxConcurrentDevices & Release Lock
+    API-->>OP: 200 OK (Wave 1 Canary 1% active)
+
+    loop Device Pull Check-in (every 300s + Phase Offset / Jitter)
+        DEV->>API: POST /api/device-agent/check-in (HMAC-SHA256)
+        API->>DB: Check device group maintenanceWindow (IANA timezone) & active Wave 1 task
+        alt Inside maintenanceWindow & sem:campaign:{id} slot available
+            API->>RD: Acquire 1 download slot from sem:campaign:{id}
+            API->>DB: UPDATE device_tasks SET status = DOWNLOADING WHERE status = PENDING
+            API-->>DEV: 200 OK (action = UPDATE, Pre-signed URL TTL 15m, SHA-256)
+            DEV->>CDN: Direct GET firmware (~50MB) & verify SHA-256
+            DEV->>API: POST /api/device-agent/tasks/{taskId}/result (stage = DOWNLOADED)
+            API->>RD: Release 1 download slot back to sem:campaign:{id}
+            API->>DB: UPDATE status = INSTALLING
+            DEV->>DEV: Flash inactive Bank B & Reboot with Hardware Watchdog
+            DEV->>API: POST /api/device-agent/tasks/{taskId}/result (stage = SUCCESS | ROLLED_BACK)
+            API->>DB: Atomic UPDATE task + currentFirmwareId + device_firmware_histories (if SUCCESS)
+        else Outside maintenanceWindow OR no download slot available
+            API-->>DEV: 200 OK (action = NO_TASK, nextCheckInSeconds = 300)
+        end
+    end
+
+    loop Every 30 seconds
+        WK->>DB: Aggregate terminal tasks in active Wave (exclude in-flight retries < 3)
+        alt Sample N >= 50 AND FailureRate > failureThresholdPercent
+            WK->>DB: UPDATE campaign = PAUSED, wave = PAUSED + INSERT audit_logs (SYSTEM)
+            WK-->>OP: Alert Operator & trigger async AI Error Log Classifier
+        else All Wave tasks terminal (or past deadlineAt) AND SuccessRate >= 95% + Soak Time >= 2h
+            WK->>DB: UPDATE current wave = COMPLETED; open next wave = RUNNING (10% -> 50% -> 100%)
+        end
+    end

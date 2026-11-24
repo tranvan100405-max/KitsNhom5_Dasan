@@ -1,0 +1,44 @@
+sequenceDiagram
+    autonumber
+    participant D as Edge Device Agent (Bank A/B)
+    participant API as Device Ingestion API
+    participant RD as Redis (Nonce & Semaphore)
+    participant DB as PostgreSQL Database
+    participant S3 as Object Storage + CDN
+
+    loop Every 300s (Phase Offset hash(serialNo)%300 + Jitter +-30s)
+        D->>API: POST /api/device-agent/check-in {serialNo, model, currentVersion, activePartition} + HMAC-SHA256
+        API->>RD: Verify timestamp (+-300s) & SET NX nonce (replay check)
+        API->>RD: Buffer lastCheckInAt (batch flushed to DB every 30-60s)
+        API->>DB: Reconcile in-flight task via currentVersion & query eligible PENDING task
+        alt No task / Campaign PAUSED / Outside maintenanceWindow / Backoff / No slot
+            API-->>D: 200 OK {action: NO_TASK, nextCheckInSeconds: 300}
+        else Eligible PENDING task & slot acquired
+            API->>RD: Acquire 1 slot from sem:campaign:{id}
+            API->>DB: UPDATE device_tasks SET status = DOWNLOADING WHERE status = PENDING
+            API-->>D: 200 OK {action: UPDATE, taskId, attempt, downloadUrl (TTL 15m), checksum}
+        end
+    end
+
+    D->>S3: Direct GET downloadUrl (~50MB via CDN)
+    D->>D: Verify SHA-256 checksum
+    alt Network drop or checksum mismatch
+        D->>API: POST /api/device-agent/tasks/{taskId}/result {attempt, stage: FAILED, errorCode}
+        API->>RD: Release download slot
+        API->>DB: If attemptCount < 3 -> PENDING (backoff 1m -> 5m -> 15m); else -> FAILED
+    else Checksum valid
+        D->>API: POST /api/device-agent/tasks/{taskId}/result {attempt, stage: DOWNLOADED}
+        API->>RD: Release download slot immediately (Q6)
+        API->>DB: UPDATE status = INSTALLING
+        D->>D: Write image to inactive Bank B (Bank A untouched)
+        D->>API: POST /api/device-agent/tasks/{taskId}/result {attempt, stage: VERIFYING}
+        D->>D: Set boot_try = 1 & reboot into Bank B under Hardware Watchdog
+        alt Boot OK & WAN self-test OK
+            D->>API: POST /api/device-agent/tasks/{taskId}/result {attempt, stage: SUCCESS, reportedVersion}
+            API->>DB: BEGIN; task = SUCCESS; devices.currentFirmwareId = toFirmwareId; INSERT histories; COMMIT
+        else Boot-loop 3 times or self-test failure
+            D->>D: Bootloader Watchdog reverts to Bank A (old firmware intact)
+            D->>API: POST /api/device-agent/tasks/{taskId}/result {attempt, stage: ROLLED_BACK, errorCode: ERR_WATCHDOG_BOOT_TIMEOUT}
+            API->>DB: UPDATE status = ROLLED_BACK (no auto-retry; counted in Wave FailureRate)
+        end
+    end

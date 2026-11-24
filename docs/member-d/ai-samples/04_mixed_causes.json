@@ -1,0 +1,164 @@
+{
+  "schemaVersion": 1,
+  "request": {
+    "analysisId": "anl-20261124-0004",
+    "trigger": "CAMPAIGN_PAUSED",
+    "requestedAt": "2026-11-24T11:30:00Z",
+    "windowStart": "2026-11-24T10:00:00Z",
+    "windowEnd": "2026-11-24T11:25:00Z",
+    "locale": "vi-VN"
+  },
+  "campaign": {
+    "campaignId": "cmp-2026-1121-mixed-w1",
+    "name": "H660GM 2.5.0 - ISP-D hon hop - Wave 1",
+    "status": "PAUSED",
+    "failureThresholdPercent": 5.0,
+    "maxConcurrentDevices": 200,
+    "waveId": "wv-01",
+    "waveOrder": 1,
+    "rolloutPercentage": 1.0,
+    "waveStatus": "PAUSED",
+    "waveDeadlineAt": "2026-11-24T11:22:00Z"
+  },
+  "firmware": {
+    "targetModel": "DASAN-H660GM",
+    "toVersion": "2.5.0",
+    "versionCode": 20500,
+    "fromVersion": "2.3.0",
+    "minRequiredVersion": "2.3.0"
+  },
+  "stats": {
+    "tasksTerminal": 400,
+    "success": 277,
+    "failedFinal": 77,
+    "timeoutFinal": 46,
+    "rolledBack": 0,
+    "failureRatePercent": 30.75,
+    "stillActive": 26,
+    "deviceGroups": [
+      { "groupId": "grp-d1", "label": "ISP-D / Da Nang", "region": "Da Nang", "deviceCount": 180 },
+      { "groupId": "grp-d2", "label": "ISP-D / Hue", "region": "Hue", "deviceCount": 130 },
+      { "groupId": "grp-d3", "label": "ISP-D / Quang Nam", "region": "Quang Nam", "deviceCount": 120 }
+    ]
+  },
+  "errorGroups": [
+    {
+      "errorCode": "ERR_DOWNLOAD_INTERRUPTED",
+      "status": "FAILED",
+      "model": "DASAN-H660GM",
+      "fromVersion": "2.3.0",
+      "toVersion": "2.5.0",
+      "taskCount": 40,
+      "deviceRefs": [
+        "SN-4001", "SN-4002", "SN-4003", "SN-4004", "SN-4005",
+        "SN-4006", "SN-4007", "SN-4008", "SN-4009", "SN-4010",
+        "SN-4011", "SN-4012", "SN-4013", "SN-4014", "SN-4015",
+        "SN-4016", "SN-4017", "SN-4018", "SN-4019", "SN-4020"
+      ],
+      "attemptCountMin": 1,
+      "attemptCountMax": 3,
+      "firstSeenAt": "2026-11-24T10:03:00Z",
+      "lastSeenAt": "2026-11-24T11:20:00Z",
+      "deviceGroupIds": ["grp-d1", "grp-d3"],
+      "sampleMessages": ["Mat ket noi khi dang tai, thu lai 3 lan van loi"],
+      "retryBudgetExhausted": true
+    },
+    {
+      "errorCode": "ERR_CHECKSUM_MISMATCH",
+      "status": "FAILED",
+      "model": "DASAN-H660GM",
+      "fromVersion": "2.3.0",
+      "toVersion": "2.5.0",
+      "taskCount": 22,
+      "deviceRefs": [
+        "SN-4101", "SN-4102", "SN-4103", "SN-4104", "SN-4105",
+        "SN-4106", "SN-4107", "SN-4108", "SN-4109", "SN-4110",
+        "SN-4111", "SN-4112", "SN-4113", "SN-4114", "SN-4115",
+        "SN-4116", "SN-4117", "SN-4118", "SN-4119", "SN-4120"
+      ],
+      "attemptCountMin": 2,
+      "attemptCountMax": 3,
+      "firstSeenAt": "2026-11-24T10:21:00Z",
+      "lastSeenAt": "2026-11-24T11:18:00Z",
+      "deviceGroupIds": ["grp-d2"],
+      "sampleMessages": ["SHA-256 khong khop, bo file"],
+      "retryBudgetExhausted": true
+    },
+    {
+      "errorCode": "STATE_TIMEOUT_INSTALLING",
+      "status": "TIMEOUT",
+      "model": "DASAN-H660GM",
+      "fromVersion": "2.3.0",
+      "toVersion": "2.5.0",
+      "taskCount": 15,
+      "deviceRefs": [
+        "SN-4201", "SN-4202", "SN-4203", "SN-4204", "SN-4205",
+        "SN-4206", "SN-4207", "SN-4208", "SN-4209", "SN-4210",
+        "SN-4211", "SN-4212", "SN-4213", "SN-4214", "SN-4215"
+      ],
+      "attemptCountMin": 1,
+      "attemptCountMax": 3,
+      "firstSeenAt": "2026-11-24T10:35:00Z",
+      "lastSeenAt": "2026-11-24T11:12:00Z",
+      "deviceGroupIds": ["grp-d1"],
+      "sampleMessages": ["Khong nhan duoc heartbeat sau khi o trang thai INSTALLING qua 10 phut"],
+      "retryBudgetExhausted": true
+    },
+    {
+      "errorCode": "INCOMPATIBLE",
+      "status": "FAILED",
+      "model": "DASAN-H660GM",
+      "fromVersion": "2.1.0",
+      "toVersion": "2.5.0",
+      "taskCount": 9,
+      "deviceRefs": [
+        "SN-4301", "SN-4302", "SN-4303", "SN-4304", "SN-4305",
+        "SN-4306", "SN-4307", "SN-4308", "SN-4309"
+      ],
+      "attemptCountMin": 1,
+      "attemptCountMax": 1,
+      "firstSeenAt": "2026-11-24T10:02:00Z",
+      "lastSeenAt": "2026-11-24T10:44:00Z",
+      "deviceGroupIds": ["grp-d3"],
+      "sampleMessages": ["Server tu choi giao task: versionCode < minRequiredVersionCode"],
+      "retryBudgetExhausted": false
+    },
+    {
+      "errorCode": "WAVE_DEADLINE_EXCEEDED",
+      "status": "TIMEOUT",
+      "model": "DASAN-H660GM",
+      "fromVersion": "2.3.0",
+      "toVersion": "2.5.0",
+      "taskCount": 31,
+      "deviceRefs": [
+        "SN-4401", "SN-4402", "SN-4403", "SN-4404", "SN-4405",
+        "SN-4406", "SN-4407", "SN-4408", "SN-4409", "SN-4410",
+        "SN-4411", "SN-4412", "SN-4413", "SN-4414", "SN-4415",
+        "SN-4416", "SN-4417", "SN-4418", "SN-4419", "SN-4420"
+      ],
+      "attemptCountMin": 1,
+      "attemptCountMax": 1,
+      "firstSeenAt": "2026-11-24T11:23:00Z",
+      "lastSeenAt": "2026-11-24T11:23:00Z",
+      "deviceGroupIds": ["grp-d2", "grp-d3"],
+      "sampleMessages": ["Wave da qua han chot deadlineAt khi task chua bat dau"],
+      "retryBudgetExhausted": false
+    },
+    {
+      "errorCode": "UNKNOWN",
+      "status": "FAILED",
+      "model": "DASAN-H660GM",
+      "fromVersion": "2.3.0",
+      "toVersion": "2.5.0",
+      "taskCount": 6,
+      "deviceRefs": ["SN-4501", "SN-4502", "SN-4503", "SN-4504", "SN-4505", "SN-4506"],
+      "attemptCountMin": 3,
+      "attemptCountMax": 3,
+      "firstSeenAt": "2026-11-24T10:50:00Z",
+      "lastSeenAt": "2026-11-24T11:15:00Z",
+      "deviceGroupIds": ["grp-d1", "grp-d2"],
+      "sampleMessages": ["Thiet bi bao FAILED nhung khong gui errorCode"],
+      "retryBudgetExhausted": true
+    }
+  ]
+}

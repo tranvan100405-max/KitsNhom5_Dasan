@@ -1,0 +1,27 @@
+flowchart LR
+    subgraph Edge["Edge Fleet"]
+        D1["100k ONT/ONU Devices"]
+    end
+    subgraph CoreBackend["Core Rollout Backend (Deterministic)"]
+        API["Device Ingestion API<br/>POST /tasks/{id}/result"]
+        DB[("PostgreSQL<br/>device_tasks")]
+        CAMP["Campaign Engine (C)<br/>Mechanical Auto-Pause"]
+        REDIS[("Redis Queue / Cache")]
+    end
+    subgraph AdvisoryAI["Read-Only Advisory AI Pipeline (D)"]
+        AGG["SQL Aggregator<br/>Group by errorCode+model+ver<br/>Anonymize SN-#### (<=20 groups)"]
+        AISVC["AI Classifier Worker<br/>(Prompt v2)"]
+        LLM[["External LLM API<br/>(JSON Object Mode)"]]
+        VAL["3-Layer Validator<br/>(Schema + Input Subset + PII/Injection)"]
+        PANEL["Dashboard AI Advisory Panel<br/>(Hidden on Fallback/Timeout)"]
+    end
+    OP["OPERATOR<br/>(Human-in-the-Loop)"]
+
+    D1 -->|"Report result"| API --> DB
+    DB --> CAMP
+    CAMP -->|"Trigger on PAUSED or<br/>Wave COMPLETED"| REDIS
+    REDIS -->|"Async Job"| AISVC
+    DB -->|"Read-only"| AGG --> AISVC
+    AISVC -->|"INPUT_JSON"| LLM -->|"Raw JSON"| VAL
+    VAL -->|"Pass"| PANEL --> OP
+    OP -->|"Manual Confirm Only<br/>(Resume / Abort / Rollback)"| CAMP

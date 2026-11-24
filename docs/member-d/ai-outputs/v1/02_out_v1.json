@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "analysisId": "anl-20261124-0002",
+  "campaignId": "cmp-2026-1120-h660gmv2-w1",
+  "waveId": "wv-01",
+  "summary": {
+    "headline": "Wave wv-01 tạm dừng với tỷ lệ lỗi 11.72% (vượt ngưỡng 5.0%), chủ yếu do 68 tác vụ lỗi sai lệch checksum trên cả 5 nhóm vùng.",
+    "severity": "HIGH",
+    "needsHumanAttention": true
+  },
+  "groups": [
+    {
+      "groupId": "G1",
+      "rootCauseGroup": "CHECKSUM_INTEGRITY",
+      "confidence": 0.85,
+      "errorCodes": [
+        "ERR_CHECKSUM_MISMATCH"
+      ],
+      "statuses": [
+        "FAILED"
+      ],
+      "model": "DASAN-H660GM-V2",
+      "fromVersion": "3.0.2",
+      "toVersion": "3.1.0",
+      "deviceCount": 68,
+      "deviceRefs": [
+        "SN-2001",
+        "SN-2002",
+        "SN-2003",
+        "SN-2004",
+        "SN-2005",
+        "SN-2006",
+        "SN-2007",
+        "SN-2008",
+        "SN-2009",
+        "SN-2010",
+        "SN-2011",
+        "SN-2012",
+        "SN-2013",
+        "SN-2014",
+        "SN-2015",
+        "SN-2016",
+        "SN-2017",
+        "SN-2018",
+        "SN-2019",
+        "SN-2020"
+      ],
+      "evidence": [
+        "errorGroups.0.errorCode=ERR_CHECKSUM_MISMATCH, status=FAILED, taskCount=68, attemptCountMin=3, attemptCountMax=3, retryBudgetExhausted=true",
+        "errorGroups.0.deviceGroupIds=[\"grp-b1\",\"grp-b2\",\"grp-b3\",\"grp-b4\",\"grp-b5\"] trải rộng trên toàn bộ 5 nhóm thiết bị",
+        "errorGroups.0.sampleMessages ghi nhận SHA-256 không khớp (expected 9f2c41..., nhận 000000...) và file nhận được 46.8 MB thay vi 50 MB",
+        "stats.failureRatePercent=11.72 vượt campaign.failureThresholdPercent=5.0 trong bối cảnh stats.success=565 và stats.failedFinal=72"
+      ],
+      "reasoning": "68/75 tác vụ lỗi cuối gặp ERR_CHECKSUM_MISMATCH sau đủ 3 lượt thử trên cùng model DASAN-H660GM-V2 (3.0.2 lên 3.1.0) ở cả 5 nhóm vùng grp-b1 đến grp-b5. Do lỗi lặp lại ở nhiều vùng với file thiếu dung lượng (46.8 MB thay vì 50 MB) hoặc mã băm toàn 0, nghi có lỗi ở gói ảnh firmware 3.1.0 hoặc bản sao trên hạ tầng phân phối/CDN, dù chưa loại trừ sự cố cắt cụt truyền tải vì vẫn có 565 tác vụ thành công.",
+      "suggestedAction": "recommend_review_firmware"
+    },
+    {
+      "groupId": "G2",
+      "rootCauseGroup": "DOWNLOAD_TRANSPORT",
+      "confidence": 0.75,
+      "errorCodes": [
+        "ERR_DOWNLOAD_INTERRUPTED",
+        "STATE_TIMEOUT_DOWNLOADING"
+      ],
+      "statuses": [
+        "FAILED",
+        "TIMEOUT"
+      ],
+      "model": "DASAN-H660GM-V2",
+      "fromVersion": "3.0.2",
+      "toVersion": "3.1.0",
+      "deviceCount": 7,
+      "deviceRefs": [
+        "SN-2101",
+        "SN-2102",
+        "SN-2103",
+        "SN-2104",
+        "SN-2201",
+        "SN-2202",
+        "SN-2203"
+      ],
+      "evidence": [
+        "errorGroups.1.errorCode=ERR_DOWNLOAD_INTERRUPTED, status=FAILED, taskCount=4, attemptCountMin=1, attemptCountMax=3, retryBudgetExhausted=false, deviceGroupIds=[\"grp-b1\",\"grp-b3\"]",
+        "errorGroups.2.errorCode=STATE_TIMEOUT_DOWNLOADING, status=TIMEOUT, taskCount=3, attemptCountMin=3, attemptCountMax=3, retryBudgetExhausted=true, deviceGroupIds=[\"grp-b2\",\"grp-b5\"]",
+        "errorGroups.1.sampleMessages và errorGroups.2.sampleMessages ghi nhận mất kết nối khi đang tải và không nhận được heartbeat quá 15 phút ở trạng thái DOWNLOADING"
+      ],
+      "reasoning": "7 tác vụ lỗi ở bước tải gồm 4 ca ERR_DOWNLOAD_INTERRUPTED và 3 ca STATE_TIMEOUT_DOWNLOADING tại các nhóm grp-b1, grp-b2, grp-b3, grp-b5. Dữ liệu gợi ý khả năng gián đoạn kết nối mạng hoặc timeout đường truyền phía thiết bị trong lúc tải firmware, tuy nhiên với 3 ca STATE_TIMEOUT_DOWNLOADING vẫn chưa loại trừ khả năng thiết bị mất heartbeat hoàn toàn.",
+      "suggestedAction": "investigate"
+    }
+  ],
+  "unclassified": [],
+  "inputAnomalies": [
+    "TRUNCATED_REFS"
+  ],
+  "limitations": [
+    "Trường errorGroups.0.deviceRefs chỉ cung cấp 20 mã thiết bị trong tổng số 68 tác vụ lỗi ERR_CHECKSUM_MISMATCH.",
+    "Không có thông tin máy chủ tải hoặc node CDN để biết 68 ca lỗi checksum tải từ cùng một nguồn hay khác nguồn với 565 ca thành công.",
+    "Không có số lượng lỗi chi tiết theo từng nhóm vùng trong deviceGroupIds cho từng mã lỗi.",
+    "Chưa rõ trạng thái cuối của 9 tác vụ đang chạy (stats.stillActive=9) và lý do errorGroups.1 kết thúc FAILED khi retryBudgetExhausted=false."
+  ]
+}

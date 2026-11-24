@@ -15,7 +15,7 @@
      * `DeviceTaskStatus`: `PENDING`, `DOWNLOADING`, `INSTALLING`, `VERIFYING`, `SUCCESS`, `FAILED`, `TIMEOUT`, `ROLLED_BACK`.
      * `WaveStatus`: `PENDING`, `RUNNING`, `PAUSED`, `COMPLETED` *(không dùng `FAILED` — wave lỗi thì Campaign chuyển `PAUSED`)*.
      * `FirmwareStatus`: `UPLOADED`, `APPROVED`, `DEPRECATED`.
-   * **Cơ chế xác thực:** Admin/Operator dùng `JWT`; Thiết bị dùng `mTLS` hoặc `HMAC-SHA256(serialNo + timestamp + nonce)` (chống replay).
+   * **Cơ chế xác thực:** Admin/Operator dùng `JWT`; Thiết bị dùng `mTLS` hoặc `HMAC-SHA256(serialNo + timestamp + nonce + METHOD + PATH + SHA256(body))` (chống replay + chống sửa body, `secret` lưu tách biệt tại `device_credentials` / KMS).
    * **Các định nghĩa nghiệp vụ đã chốt (mọi sơ đồ/slide phải dùng đúng):**
 
      | # | Vấn đề | Quy ước chốt |
@@ -25,8 +25,8 @@
      | Q3 | Phạm vi tính tỷ lệ lỗi | Auto-pause đánh giá theo **Wave đang chạy** (phản ánh nhanh firmware lỗi); Dashboard hiển thị thêm tỷ lệ lỗi cộng dồn của Campaign. |
      | Q4 | Retry có tính vào FailureRate? | **Không tính từng lần thử.** Chỉ đếm task ở trạng thái **kết thúc cuối cùng**: `SUCCESS`, `ROLLED_BACK`, `FAILED`/`TIMEOUT` **đã hết lượt retry** (`attemptCount = maxAttempts = 3`). |
      | Q5 | Server biết `INSTALLING`/`VERIFYING` thế nào? | `POST /api/device-agent/tasks/{taskId}/result` nhận cả **trạng thái trung gian** qua trường `stage` (`DOWNLOADED`, `INSTALLING`, `VERIFYING`) và **kết quả cuối** (`SUCCESS`/`FAILED`/`ROLLED_BACK`). Mỗi lần gọi cập nhật `lastHeartbeatAt`. |
-     | Q6 | Khi nào trả slot `maxConcurrentDevices`? | Slot là **slot tải xuống**: cấp khi task → `DOWNLOADING`; **trả khi thiết bị báo tải xong (`INSTALLING`)**, hoặc khi `FAILED`/`TIMEOUT` ở bước tải. Semaphore tính **theo từng campaign**: key `sem:campaign:{id}`. |
-     | Q7 | Thiết bị OFFLINE & điều kiện hoàn tất | Chỉ tạo task cho thiết bị đủ điều kiện, kể cả OFFLINE (nhận task khi online lại). Mỗi wave có **hạn chót** `waveDeadline` (mặc định 24h): task chưa bắt đầu khi hết hạn → `TIMEOUT` (không retry). Wave `COMPLETED` khi mọi task ở trạng thái kết thúc **hoặc** quá hạn chót. Campaign `COMPLETED` khi wave cuối `COMPLETED`. |
+     | Q6 | Khi nào trả slot `maxConcurrentDevices`? | Slot là **slot tải xuống**: cấp khi task → `DOWNLOADING`; **trả khi thiết bị báo tải xong (`stage = DOWNLOADED` / `INSTALLING`)**, hoặc khi `FAILED`/`TIMEOUT` ở bước tải. Semaphore tính **theo từng campaign**: key `sem:campaign:{id}`. |
+     | Q7 | Thiết bị OFFLINE, hạn chót & `ABORTED` | Chỉ tạo task cho thiết bị đủ điều kiện, kể cả OFFLINE (nhận task khi online lại). Mỗi wave có **hạn chót** `deadlineAt` (`NULL` khi `PENDING`, mặc định `startedAt + 24h` khi `RUNNING`; có thể cấu hình ngắn hơn vd `1h` cho straggler): task chưa bắt đầu khi hết hạn → `TIMEOUT` (`WAVE_DEADLINE_EXCEEDED`, không retry). Khi Campaign bị `ABORTED`, các task `PENDING` chưa chạy chuyển sang `FAILED` (`CAMPAIGN_ABORTED`) để giải phóng khóa `uq_active_device_task`. |
      | Q8 | So sánh phiên bản | Thêm `firmware_versions.versionCode INT` (vd v2.4.1 → 20401) và `minRequiredVersionCode INT`; **so sánh số**, không so sánh chuỗi. |
      | Q9 | Timeout & Retry thiết bị | Tải: 15 phút · Cài: 10 phút · Verify (boot + self-test): 5 phút. Retry tối đa 3 lần, backoff 1 → 5 → 15 phút. `ROLLED_BACK` **không** retry tự động. |
      | Q10 | Tên file sơ đồ | Theo checklist mục 4 (đã cập nhật đúng tên file thực tế). |
@@ -136,7 +136,7 @@
    * Dashboard Operator: số task theo từng trạng thái, success/failure rate **theo wave** và **cộng dồn campaign**, số lượt tải đang chạy / `maxConcurrentDevices`, top mã lỗi, thời gian cập nhật trung bình, tỷ lệ thiết bị OFFLINE, thời gian còn lại tới hạn chót wave.
    * Chỉ số báo cần dừng: FailureRate tiến sát ngưỡng, tỷ lệ `ROLLED_BACK` > 0 tăng nhanh, tỷ lệ `TIMEOUT` tăng đột biến, một mã lỗi chiếm đa số.
 6. **Điểm cộng #14 — Khung giờ bảo trì & đa múi giờ (giao cho C):**
-   * Thêm `device_groups.maintenanceWindowStart/End` + `timezone` (phối hợp A cập nhật ERD). Khi thiết bị check-in ngoài khung giờ bảo trì theo giờ địa phương của group $\to$ trả `NO_TASK`.
+   * Thêm `device_groups.maintenanceWindow` (vd `"01:00-05:00"`) + `timezone` (chuẩn IANA, vd `"Asia/Ho_Chi_Minh"`, đã khớp ERD của A). Khi thiết bị check-in ngoài khung giờ bảo trì theo giờ địa phương của group $\to$ trả `NO_TASK`.
 7. **Phụ trách Slide thuyết trình:**
    * **Slide 7:** Luồng 2 - Triển khai chiến dịch, Canary Wave, Logic chọn thiết bị & Giới hạn `maxConcurrentDevices` (+ ghi chú khung giờ bảo trì).
    * **Slide 8 (nửa trái):** Máy trạng thái Campaign (trigger Operator vs. System).
@@ -161,7 +161,7 @@
    * Chỉ rõ các điểm nghẽn (DB Write bottleneck, Bandwidth bottleneck — 500 lượt tải $\times$ 5 MB/s $\approx$ 2,5 GB/s $\approx$ 20 Gbps nên bắt buộc có CDN) và giải pháp khắc phục; dùng thời gian cài/reboot thực tế theo timeout của B (quy ước Q9) và nêu rõ **kịch bản tăng quy mô gấp 10 lần (1.000.000 thiết bị)**.
 2. **Bảo mật, Ma trận phân quyền & Nhật ký kiểm toán (Audit Trail):**
    * Thiết lập ma trận phân quyền RBAC: 4 vai trò `ADMIN`, `DEVELOPER`, `QA`, `OPERATOR` theo từng endpoint.
-   * Lập luận giải pháp tách biệt xác thực: Web Admin dùng JWT; Thiết bị dùng mTLS / `HMAC-SHA256(serialNo + timestamp + nonce)` chống replay.
+   * Lập luận giải pháp tách biệt xác thực: Web Admin dùng JWT; Thiết bị dùng mTLS / `HMAC-SHA256(serialNo + timestamp + nonce + METHOD + PATH + SHA256(body))` chống replay & chống sửa body.
    * Thiết kế bảng `audit_logs` (chỉ ghi thêm / append-only, `actorId` nullable kèm `actorType`: `MEMBER | SYSTEM | DEVICE`).
 3. **Thiết kế & Thực nghiệm Tính năng AI / LLM (Phương án C kết hợp B):**
    * Xây dựng Prompt đủ 5 thành phần (mục đích, bối cảnh, trường đầu vào, tiêu chí, định dạng **JSON Schema**) và bộ lọc Backend validate.
