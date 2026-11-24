@@ -1,0 +1,104 @@
+{
+  "schemaVersion": 1,
+  "request": {
+    "analysisId": "anl-20261124-0002",
+    "trigger": "WAVE_COMPLETED",
+    "requestedAt": "2026-11-24T06:40:00Z",
+    "windowStart": "2026-11-24T03:00:00Z",
+    "windowEnd": "2026-11-24T06:35:00Z",
+    "locale": "vi-VN"
+  },
+  "campaign": {
+    "campaignId": "cmp-2026-1120-h660gmv2-w1",
+    "name": "H660GM-V2 3.1.0 - ISP-B mien Nam - Wave 1",
+    "status": "RUNNING",
+    "failureThresholdPercent": 5.0,
+    "maxConcurrentDevices": 300,
+    "waveId": "wv-01",
+    "waveOrder": 1,
+    "rolloutPercentage": 1.0,
+    "waveStatus": "COMPLETED",
+    "waveDeadlineAt": "2026-11-25T03:00:00Z"
+  },
+  "firmware": {
+    "targetModel": "DASAN-H660GM-V2",
+    "toVersion": "3.1.0",
+    "versionCode": 30100,
+    "fromVersion": "3.0.2",
+    "minRequiredVersion": "3.0.0"
+  },
+  "stats": {
+    "tasksTerminal": 640,
+    "success": 565,
+    "failedFinal": 72,
+    "timeoutFinal": 3,
+    "rolledBack": 0,
+    "failureRatePercent": 11.72,
+    "stillActive": 9,
+    "deviceGroups": [
+      { "groupId": "grp-b1", "label": "ISP-B / TP.HCM", "region": "TP.HCM", "deviceCount": 130 },
+      { "groupId": "grp-b2", "label": "ISP-B / Binh Duong", "region": "Binh Duong", "deviceCount": 120 },
+      { "groupId": "grp-b3", "label": "ISP-B / Dong Nai", "region": "Dong Nai", "deviceCount": 130 },
+      { "groupId": "grp-b4", "label": "ISP-B / Can Tho", "region": "Can Tho", "deviceCount": 130 },
+      { "groupId": "grp-b5", "label": "ISP-B / Ba Ria - Vung Tau", "region": "Ba Ria - Vung Tau", "deviceCount": 130 }
+    ]
+  },
+  "errorGroups": [
+    {
+      "errorCode": "ERR_CHECKSUM_MISMATCH",
+      "status": "FAILED",
+      "model": "DASAN-H660GM-V2",
+      "fromVersion": "3.0.2",
+      "toVersion": "3.1.0",
+      "taskCount": 68,
+      "deviceRefs": [
+        "SN-2001", "SN-2002", "SN-2003", "SN-2004", "SN-2005",
+        "SN-2006", "SN-2007", "SN-2008", "SN-2009", "SN-2010",
+        "SN-2011", "SN-2012", "SN-2013", "SN-2014", "SN-2015",
+        "SN-2016", "SN-2017", "SN-2018", "SN-2019", "SN-2020"
+      ],
+      "attemptCountMin": 3,
+      "attemptCountMax": 3,
+      "firstSeenAt": "2026-11-24T03:05:00Z",
+      "lastSeenAt": "2026-11-24T06:30:00Z",
+      "deviceGroupIds": ["grp-b1", "grp-b2", "grp-b3", "grp-b4", "grp-b5"],
+      "sampleMessages": [
+        "SHA-256 khong khop, bo file: expected 9f2c41..., nhan 000000...",
+        "checksum mismatch: file nhan duoc 46.8 MB thay vi 50 MB"
+      ],
+      "retryBudgetExhausted": true
+    },
+    {
+      "errorCode": "ERR_DOWNLOAD_INTERRUPTED",
+      "status": "FAILED",
+      "model": "DASAN-H660GM-V2",
+      "fromVersion": "3.0.2",
+      "toVersion": "3.1.0",
+      "taskCount": 4,
+      "deviceRefs": ["SN-2101", "SN-2102", "SN-2103", "SN-2104"],
+      "attemptCountMin": 1,
+      "attemptCountMax": 3,
+      "firstSeenAt": "2026-11-24T04:02:00Z",
+      "lastSeenAt": "2026-11-24T05:48:00Z",
+      "deviceGroupIds": ["grp-b1", "grp-b3"],
+      "sampleMessages": ["Mat ket noi khi dang tai (roi Wi-Fi cua khach hang)"],
+      "retryBudgetExhausted": false
+    },
+    {
+      "errorCode": "STATE_TIMEOUT_DOWNLOADING",
+      "status": "TIMEOUT",
+      "model": "DASAN-H660GM-V2",
+      "fromVersion": "3.0.2",
+      "toVersion": "3.1.0",
+      "taskCount": 3,
+      "deviceRefs": ["SN-2201", "SN-2202", "SN-2203"],
+      "attemptCountMin": 3,
+      "attemptCountMax": 3,
+      "firstSeenAt": "2026-11-24T03:22:00Z",
+      "lastSeenAt": "2026-11-24T05:59:00Z",
+      "deviceGroupIds": ["grp-b2", "grp-b5"],
+      "sampleMessages": ["Khong nhan duoc heartbeat sau khi o trang thai DOWNLOADING qua 15 phut"],
+      "retryBudgetExhausted": true
+    }
+  ]
+}

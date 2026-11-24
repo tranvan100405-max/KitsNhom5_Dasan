@@ -1,0 +1,90 @@
+{
+  "schemaVersion": 1,
+  "request": {
+    "analysisId": "anl-20261124-0001",
+    "trigger": "CAMPAIGN_PAUSED",
+    "requestedAt": "2026-11-24T02:15:00Z",
+    "windowStart": "2026-11-24T00:00:00Z",
+    "windowEnd": "2026-11-24T02:10:00Z",
+    "locale": "vi-VN"
+  },
+  "campaign": {
+    "campaignId": "cmp-2026-1118-h660gm-w2",
+    "name": "H660GM 2.4.1 - ISP-A toan quoc - Wave 2",
+    "status": "PAUSED",
+    "failureThresholdPercent": 5.0,
+    "maxConcurrentDevices": 500,
+    "waveId": "wv-02",
+    "waveOrder": 2,
+    "rolloutPercentage": 10.0,
+    "waveStatus": "PAUSED",
+    "waveDeadlineAt": "2026-11-25T00:00:00Z"
+  },
+  "firmware": {
+    "targetModel": "DASAN-H660GM",
+    "toVersion": "2.4.1",
+    "versionCode": 20401,
+    "fromVersion": "2.3.0",
+    "minRequiredVersion": "2.3.0"
+  },
+  "stats": {
+    "tasksTerminal": 1148,
+    "success": 1040,
+    "failedFinal": 96,
+    "timeoutFinal": 12,
+    "rolledBack": 0,
+    "failureRatePercent": 9.41,
+    "stillActive": 32,
+    "deviceGroups": [
+      { "groupId": "grp-a1", "label": "ISP-A / Ha Noi", "region": "Ha Noi", "deviceCount": 640 },
+      { "groupId": "grp-a2", "label": "ISP-A / Bac Ninh", "region": "Bac Ninh", "deviceCount": 560 }
+    ]
+  },
+  "errorGroups": [
+    {
+      "errorCode": "ERR_DOWNLOAD_INTERRUPTED",
+      "status": "FAILED",
+      "model": "DASAN-H660GM",
+      "fromVersion": "2.3.0",
+      "toVersion": "2.4.1",
+      "taskCount": 96,
+      "deviceRefs": [
+        "SN-0101", "SN-0102", "SN-0103", "SN-0104", "SN-0105",
+        "SN-0106", "SN-0107", "SN-0108", "SN-0109", "SN-0110",
+        "SN-0111", "SN-0112", "SN-0113", "SN-0114", "SN-0115",
+        "SN-0116", "SN-0117", "SN-0118", "SN-0119", "SN-0120"
+      ],
+      "attemptCountMin": 3,
+      "attemptCountMax": 3,
+      "firstSeenAt": "2026-11-24T00:12:00Z",
+      "lastSeenAt": "2026-11-24T02:07:00Z",
+      "deviceGroupIds": ["grp-a1", "grp-a2"],
+      "sampleMessages": [
+        "Ket noi toi CDN bi ngat sau 30s, tai lai 3 lan deu that bai",
+        "download interrupted: timeout khi doc chunk 41/50 MB"
+      ],
+      "retryBudgetExhausted": true
+    },
+    {
+      "errorCode": "STATE_TIMEOUT_DOWNLOADING",
+      "status": "TIMEOUT",
+      "model": "DASAN-H660GM",
+      "fromVersion": "2.3.0",
+      "toVersion": "2.4.1",
+      "taskCount": 12,
+      "deviceRefs": [
+        "SN-0301", "SN-0302", "SN-0303", "SN-0304", "SN-0305", "SN-0306",
+        "SN-0307", "SN-0308", "SN-0309", "SN-0310", "SN-0311", "SN-0312"
+      ],
+      "attemptCountMin": 2,
+      "attemptCountMax": 3,
+      "firstSeenAt": "2026-11-24T00:31:00Z",
+      "lastSeenAt": "2026-11-24T02:04:00Z",
+      "deviceGroupIds": ["grp-a1", "grp-a2"],
+      "sampleMessages": [
+        "Khong nhan duoc heartbeat sau khi o trang thai DOWNLOADING qua 15 phut"
+      ],
+      "retryBudgetExhausted": true
+    }
+  ]
+}

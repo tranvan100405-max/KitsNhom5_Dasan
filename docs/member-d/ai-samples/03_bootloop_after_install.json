@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "request": {
+    "analysisId": "anl-20261124-0003",
+    "trigger": "WAVE_COMPLETED",
+    "requestedAt": "2026-11-24T09:05:00Z",
+    "windowStart": "2026-11-24T07:00:00Z",
+    "windowEnd": "2026-11-24T09:00:00Z",
+    "locale": "vi-VN"
+  },
+  "campaign": {
+    "campaignId": "cmp-2026-1119-h660gm-w3",
+    "name": "H660GM 2.4.1 - ISP-C - Wave 3 (50%)",
+    "status": "RUNNING",
+    "failureThresholdPercent": 5.0,
+    "maxConcurrentDevices": 800,
+    "waveId": "wv-03",
+    "waveOrder": 3,
+    "rolloutPercentage": 50.0,
+    "waveStatus": "COMPLETED",
+    "waveDeadlineAt": "2026-11-25T07:00:00Z"
+  },
+  "firmware": {
+    "targetModel": "DASAN-H660GM",
+    "toVersion": "2.4.1",
+    "versionCode": 20401,
+    "fromVersion": "2.3.0",
+    "minRequiredVersion": "2.3.0"
+  },
+  "stats": {
+    "tasksTerminal": 860,
+    "success": 842,
+    "failedFinal": 0,
+    "timeoutFinal": 0,
+    "rolledBack": 18,
+    "failureRatePercent": 2.09,
+    "stillActive": 0,
+    "deviceGroups": [
+      { "groupId": "grp-c1", "label": "ISP-C / Hai Phong", "region": "Hai Phong", "deviceCount": 430 },
+      { "groupId": "grp-c2", "label": "ISP-C / Quang Ninh", "region": "Quang Ninh", "deviceCount": 430 }
+    ]
+  },
+  "errorGroups": [
+    {
+      "errorCode": "ERR_WATCHDOG_BOOT_TIMEOUT",
+      "status": "ROLLED_BACK",
+      "model": "DASAN-H660GM",
+      "fromVersion": "2.3.0",
+      "toVersion": "2.4.1",
+      "taskCount": 18,
+      "deviceRefs": [
+        "SN-3001", "SN-3002", "SN-3003", "SN-3004", "SN-3005", "SN-3006",
+        "SN-3007", "SN-3008", "SN-3009", "SN-3010", "SN-3011", "SN-3012",
+        "SN-3013", "SN-3014", "SN-3015", "SN-3016", "SN-3017", "SN-3018"
+      ],
+      "attemptCountMin": 1,
+      "attemptCountMax": 1,
+      "firstSeenAt": "2026-11-24T07:41:00Z",
+      "lastSeenAt": "2026-11-24T08:52:00Z",
+      "deviceGroupIds": ["grp-c1", "grp-c2"],
+      "sampleMessages": [
+        "Watchdog: 3 lan boot loi tren bank B",
+        "Kernel panic: unable to mount root fs on partition B"
+      ],
+      "retryBudgetExhausted": false
+    }
+  ]
+}
