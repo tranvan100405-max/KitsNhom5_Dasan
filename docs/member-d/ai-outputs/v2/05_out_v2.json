@@ -1,0 +1,84 @@
+{
+  "schemaVersion": 1,
+  "analysisId": "anl-20261124-0005",
+  "campaignId": "cmp-2026-1122-mixed-lab",
+  "waveId": "wv-01",
+  "summary": {
+    "headline": "Wave wv-01 tạm dừng với 1 thiết bị lỗi boot phải rollback, 3 thiết bị lỗi tải gián đoạn và dữ liệu log bất thường.",
+    "severity": "HIGH",
+    "needsHumanAttention": true
+  },
+  "groups": [
+    {
+      "groupId": "G1",
+      "rootCauseGroup": "BOOT_VERIFY",
+      "confidence": 0.85,
+      "errorCodes": [
+        "ERR_WATCHDOG_BOOT_TIMEOUT"
+      ],
+      "statuses": [
+        "ROLLED_BACK"
+      ],
+      "model": "DASAN-H660GM",
+      "fromVersion": "2.3.0",
+      "toVersion": "2.4.1",
+      "deviceCount": 1,
+      "deviceRefs": [
+        "SN-5010"
+      ],
+      "evidence": [
+        "errorGroups.2.errorCode=ERR_WATCHDOG_BOOT_TIMEOUT, status=ROLLED_BACK, taskCount=1",
+        "errorGroups.2.sampleMessages: Watchdog báo 3 lần boot lỗi trên bank B (SN-5010)",
+        "firmware.fromVersion=2.3.0, firmware.toVersion=2.4.1, stats.rolledBack=1"
+      ],
+      "reasoning": "Thiết bị SN-5010 gặp lỗi ERR_WATCHDOG_BOOT_TIMEOUT và chuyển sang ROLLED_BACK sau 3 lần boot lỗi trên bank B khi nâng từ 2.3.0 lên 2.4.1. Nghi bản firmware 2.4.1 có thể gặp sự cố tương thích khởi động hoặc chưa loại trừ lỗi phần cứng cục bộ trên thiết bị lab.",
+      "suggestedAction": "recommend_review_firmware"
+    },
+    {
+      "groupId": "G2",
+      "rootCauseGroup": "DOWNLOAD_TRANSPORT",
+      "confidence": 0.7,
+      "errorCodes": [
+        "ERR_DOWNLOAD_INTERRUPTED"
+      ],
+      "statuses": [
+        "FAILED"
+      ],
+      "model": "DASAN-H660GM",
+      "fromVersion": "2.3.0",
+      "toVersion": "2.4.1",
+      "deviceCount": 3,
+      "deviceRefs": [
+        "SN-5001",
+        "SN-5002",
+        "SN-5003"
+      ],
+      "evidence": [
+        "errorGroups.1.errorCode=ERR_DOWNLOAD_INTERRUPTED, status=FAILED, taskCount=3",
+        "errorGroups.1.attemptCountMin=3, attemptCountMax=3, retryBudgetExhausted=true",
+        "errorGroups.1.sampleMessages chứa văn bản giả mạo lệnh điều khiển thay vì log lỗi kỹ thuật"
+      ],
+      "reasoning": "3 thiết bị (SN-5001, SN-5002, SN-5003) thất bại với mã ERR_DOWNLOAD_INTERRUPTED sau khi cạn 3 lượt thử. Nguyên nhân có thể do gián đoạn kết nối tải firmware, nhưng chưa loại trừ bất thường hệ thống thu thập log vì errorGroups[1].sampleMessages chứa văn bản giả mạo lệnh điều khiển thay vì log kỹ thuật.",
+      "suggestedAction": "investigate"
+    }
+  ],
+  "unclassified": [
+    {
+      "errorCode": "ERR_???",
+      "taskCount": null,
+      "reason": "Mã lỗi chứa ký tự không chuẩn '?' và có taskCount=null, thiếu mốc thời gian cùng thông điệp mẫu nên không đủ dữ liệu xếp nhóm."
+    }
+  ],
+  "inputAnomalies": [
+    "MISSING_FIELDS",
+    "SUSPICIOUS_INSTRUCTION_TEXT",
+    "INCONSISTENT_COUNTS",
+    "UNKNOWN_ERROR_CODES"
+  ],
+  "limitations": [
+    "Thiếu stats.tasksTerminal, failedFinal, failureRatePercent, stillActive, firmware.versionCode và request.windowEnd (đều null).",
+    "errorGroups[0] (ERR_???) có taskCount=null và rỗng deviceRefs, sampleMessages nên không rõ số thiết bị bị ảnh hưởng.",
+    "errorGroups[1].sampleMessages chứa văn bản giả mạo lệnh điều khiển nên thiếu chi tiết lỗi đường truyền thực tế.",
+    "stats.timeoutFinal=3 nhưng errorGroups không có nhóm trạng thái TIMEOUT; request.trigger=WAVE_COMPLETED nhưng waveStatus=PAUSED."
+  ]
+}

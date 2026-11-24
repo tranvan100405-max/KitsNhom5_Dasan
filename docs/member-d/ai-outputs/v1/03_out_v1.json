@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "analysisId": "anl-20261124-0003",
+  "campaignId": "cmp-2026-1119-h660gm-w3",
+  "waveId": "wv-03",
+  "summary": {
+    "headline": "Ghi nhận 18/860 thiết bị DASAN-H660GM lỗi boot trên bank B và ROLLED_BACK sau khi hoàn tất wave wv-03 (tỷ lệ lỗi 2.09%).",
+    "severity": "HIGH",
+    "needsHumanAttention": true
+  },
+  "groups": [
+    {
+      "groupId": "G1",
+      "rootCauseGroup": "BOOT_VERIFY",
+      "confidence": 0.9,
+      "errorCodes": [
+        "ERR_WATCHDOG_BOOT_TIMEOUT"
+      ],
+      "statuses": [
+        "ROLLED_BACK"
+      ],
+      "model": "DASAN-H660GM",
+      "fromVersion": "2.3.0",
+      "toVersion": "2.4.1",
+      "deviceCount": 18,
+      "deviceRefs": [
+        "SN-3001",
+        "SN-3002",
+        "SN-3003",
+        "SN-3004",
+        "SN-3005",
+        "SN-3006",
+        "SN-3007",
+        "SN-3008",
+        "SN-3009",
+        "SN-3010",
+        "SN-3011",
+        "SN-3012",
+        "SN-3013",
+        "SN-3014",
+        "SN-3015",
+        "SN-3016",
+        "SN-3017",
+        "SN-3018"
+      ],
+      "evidence": [
+        "errorGroups.0.errorCode=\"ERR_WATCHDOG_BOOT_TIMEOUT\", status=\"ROLLED_BACK\", taskCount=18, attemptCountMax=1",
+        "errorGroups.0.sampleMessages=[\"Watchdog: 3 lan boot loi tren bank B\", \"Kernel panic: unable to mount root fs on partition B\"]",
+        "errorGroups.0.deviceGroupIds=[\"grp-c1\", \"grp-c2\"]",
+        "stats.rolledBack=18, stats.tasksTerminal=860, stats.failureRatePercent=2.09, campaign.failureThresholdPercent=5.0"
+      ],
+      "reasoning": "18 trên 860 thiết bị DASAN-H660GM nâng từ 2.3.0 lên 2.4.1 gặp mã ERR_WATCHDOG_BOOT_TIMEOUT và chuyển sang ROLLED_BACK ngay ở lượt thử đầu (attemptCountMax=1). Log mẫu ghi nhận watchdog báo 3 lần boot lỗi trên bank B và kernel panic không mount được root fs trên phân vùng B, xuất hiện ở cả hai nhóm grp-c1 và grp-c2. Dù tỷ lệ lỗi 2.09% thấp hơn ngưỡng 5.0%, hiện tượng này nghi liên quan đến lỗi khởi động của bản firmware 2.4.1 trên một tập thiết bị và chưa loại trừ lỗi ghi phân vùng cục bộ.",
+      "suggestedAction": "recommend_review_firmware"
+    }
+  ],
+  "unclassified": [],
+  "inputAnomalies": [],
+  "limitations": [
+    "Không biết phân bổ số lượng thiết bị bị ROLLED_BACK cụ thể giữa từng nhóm grp-c1 và grp-c2.",
+    "Không có dữ liệu chi tiết về đặc điểm phần cứng nội bộ để giải thích vì sao 18 thiết bị lỗi trong khi 842 thiết bị cùng model cập nhật thành công.",
+    "Trường sampleMessages chỉ cung cấp 2 dòng log mẫu nên chưa xác định được tỷ lệ thiết bị thực sự gặp kernel panic trong tổng số 18 thiết bị."
+  ]
+}

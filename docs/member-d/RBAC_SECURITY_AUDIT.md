@@ -47,7 +47,9 @@
 - Không có `POST /api/auth/refresh`, `POST /api/auth/logout` → cơ chế refresh/revoke là **ĐỀ XUẤT** (Bước 3 không yêu cầu, nhưng slide 11 nên nói rõ).
 - Không có endpoint thu hồi/rotate secret thiết bị → **ĐỀ XUẤT** `POST /api/devices/{id}/credentials/rotate` (chỉ ADMIN) để xử lý sự cố lộ secret (mục B.4).
 
-### 0.2. Các điểm LỆCH giữa dbml / tài liệu nhóm / code của B (liệt kê — KHÔNG tự sửa)
+### 0.2. Các điểm LỆCH giữa dbml / tài liệu nhóm / code của B (Đã đối chiếu & đồng bộ Cross-review)
+
+> **Cập nhật sau vòng Cross-review A · B · C · D:** Các mục `L1, L2, L3, L4, L6, L7` đã được Thành viên A cập nhật vào `ERD/dasan_firmware_rollout.dbml` (bổ sung Enum, `chk_four_eyes`, `chk_audit_actor_reference`, ghi chú tách kho `device_credentials`); mục `L8` (chữ ký HMAC 6 thành phần) đã được đưa vào `DASAN_OJT1_System_Design_Specification.md` §1 và `DASAN_OJT1_Team_Role_Assignment.md` §1; phần JWT/RBAC/Four-eyes/`audit_logs` append-only đã có bản chạy kiểm chứng tại [`mock_platform_demo.py`](mock_platform_demo.py).
 
 | # | Chỗ lệch | dbml / tài liệu nhóm | Thực tế (code B hoặc ghi chú) | Ảnh hưởng | Đề xuất xử lý (chờ chốt) |
 | :-: | :--- | :--- | :--- | :--- | :--- |

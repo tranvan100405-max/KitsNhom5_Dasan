@@ -9,7 +9,7 @@
 | **Nguồn quy ước** | `DASAN_OJT1_Team_Role_Assignment.md` §1 — quy ước **Q1–Q10**; `DASAN_OJT1_System_Design_Specification.md` §4 |
 | **File kiểm chứng** | [`capacity_calc.py`](capacity_calc.py) — in lại **toàn bộ** con số trong tài liệu (output ở **Phụ lục 1**) |
 | **Quy ước đơn vị** | 1 MB = 10⁶ byte, 1 GB = 1.000 MB, 1 TB = 1.000 GB (thập phân); Mbps/Gbps là bit/giây. Số thập phân dùng dấu phẩy kiểu Việt Nam. |
-| **Phiên bản** | **v1.1** — hiệu chỉnh nhãn kịch bản (hạn chót wave **1 h là ĐỀ XUẤT của D, khác mặc định 24 h của Q7**) và thay số hạng "+150 s" bằng mô hình có công thức (`C0 = D × T_checkin`); **chờ B & C review** trước khi chốt (xem D.2 và H22). |
+| **Phiên bản** | **v1.2 (Đã đồng bộ Cross-review A · B · C · D)** — khớp `DASAN_OJT1_System_Design_Specification.md` §4 và `docs/member-a/ERD_DESIGN_QA.md` Câu 5; kịch bản hạn chót `1h` / promotion `95%` được tách nhãn tường minh so với mặc định `24h` của Q7. |
 
 > **Nguyên tắc:** mọi con số dưới đây đều có **công thức + giả định + lập luận bậc độ lớn**. Giả định nào không có trong đề bài đều nằm ở **mục H**. Tên bảng / tên trạng thái dùng đúng quy ước nhóm (`device_tasks`, `audit_logs`, `DOWNLOADING`, `ROLLED_BACK`, …), **không đổi tên**.
 

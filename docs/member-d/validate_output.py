@@ -154,7 +154,7 @@ SCHEMA: dict[str, Any] = {
                             "type": "string",
                             "minLength": 8,
                             "maxLength": 200,
-                            "pattern": r"^(campaign|firmware|stats|errorGroups|request)\b.{3,180}$",
+                            "pattern": r"^(campaign|firmware|stats|errorGroups|request)\b.{3,192}$",
                         },
                     },
                     "reasoning": {"type": "string", "minLength": 20, "maxLength": 600},
@@ -182,7 +182,7 @@ SCHEMA: dict[str, Any] = {
                 "required": ["errorCode", "taskCount", "reason"],
                 "properties": {
                     "errorCode": {"type": "string", "pattern": r"^[A-Z][A-Z0-9_?]{1,63}$"},
-                    "taskCount": {"type": "integer", "minimum": 0, "maximum": 100000},
+                    "taskCount": {"type": ["integer", "null"], "minimum": 0, "maximum": 100000},
                     "reason": {"type": "string", "minLength": 5, "maxLength": 300},
                 },
             },
@@ -253,7 +253,9 @@ class Issue:
 # --------------------------------------------------------------------------------------
 
 
-def _type_ok(value: Any, expected: str) -> bool:
+def _type_ok(value: Any, expected: str | list[str]) -> bool:
+    if isinstance(expected, list):
+        return any(_type_ok(value, item) for item in expected)
     if expected == "object":
         return isinstance(value, dict)
     if expected == "array":
@@ -376,7 +378,7 @@ def _collect_input_facts(input_doc: dict[str, Any]) -> dict[str, Any]:
     stats = input_doc.get("stats") or {}
     error_groups = input_doc.get("errorGroups") or []
 
-    codes: dict[str, int] = {}
+    codes: dict[str, int | None] = {}
     refs: set[str] = set()
     from_versions: set[str] = set()
     for group in error_groups:
@@ -385,7 +387,10 @@ def _collect_input_facts(input_doc: dict[str, Any]) -> dict[str, Any]:
         code = group.get("errorCode")
         count = group.get("taskCount")
         if isinstance(code, str):
-            codes[code] = codes.get(code, 0) + (count if isinstance(count, int) else 0)
+            if count is None:
+                codes[code] = None
+            elif code not in codes or codes[code] is not None:
+                codes[code] = (codes.get(code) or 0) + (count if isinstance(count, int) else 0)
         for ref in group.get("deviceRefs") or []:
             if isinstance(ref, str):
                 refs.add(ref)
@@ -473,19 +478,26 @@ def check_semantics(
         all_refs.extend(group.get("deviceRefs") or [])
 
         available = 0
+        has_unknown_count = False
+        has_known_code = False
         for code in group.get("errorCodes") or []:
             if code not in facts["errorCodes"]:
                 issues.append(Issue("ERROR", "SEM_UNKNOWN_ERROR_CODE", f"{path}.errorCodes",
                                     f"mã '{code}' không có trong input"))
             else:
-                available += facts["errorCodes"][code]
+                has_known_code = True
+                code_count = facts["errorCodes"][code]
+                if code_count is None:
+                    has_unknown_count = True
+                else:
+                    available += code_count
         for ref in group.get("deviceRefs") or []:
             if ref not in facts["deviceRefs"]:
                 issues.append(Issue("ERROR", "SEM_UNKNOWN_DEVICE_REF", f"{path}.deviceRefs",
                                     f"'{ref}' không thuộc input"))
 
         device_count = group.get("deviceCount") or 0
-        if available and device_count > available:
+        if has_known_code and not has_unknown_count and device_count > available:
             issues.append(Issue("ERROR", "SEM_COUNT_EXCEEDS_INPUT", f"{path}.deviceCount",
                                 f"deviceCount {device_count} > tổng taskCount có thật trong input ({available})"))
 

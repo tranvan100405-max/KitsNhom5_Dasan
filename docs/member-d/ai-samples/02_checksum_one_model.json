@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "request": {
     "analysisId": "anl-20261124-0002",
-    "trigger": "WAVE_COMPLETED",
+    "trigger": "CAMPAIGN_PAUSED",
     "requestedAt": "2026-11-24T06:40:00Z",
     "windowStart": "2026-11-24T03:00:00Z",
     "windowEnd": "2026-11-24T06:35:00Z",
@@ -11,13 +11,13 @@
   "campaign": {
     "campaignId": "cmp-2026-1120-h660gmv2-w1",
     "name": "H660GM-V2 3.1.0 - ISP-B mien Nam - Wave 1",
-    "status": "RUNNING",
+    "status": "PAUSED",
     "failureThresholdPercent": 5.0,
     "maxConcurrentDevices": 300,
     "waveId": "wv-01",
     "waveOrder": 1,
     "rolloutPercentage": 1.0,
-    "waveStatus": "COMPLETED",
+    "waveStatus": "PAUSED",
     "waveDeadlineAt": "2026-11-25T03:00:00Z"
   },
   "firmware": {
@@ -76,13 +76,13 @@
       "toVersion": "3.1.0",
       "taskCount": 4,
       "deviceRefs": ["SN-2101", "SN-2102", "SN-2103", "SN-2104"],
-      "attemptCountMin": 1,
+      "attemptCountMin": 3,
       "attemptCountMax": 3,
       "firstSeenAt": "2026-11-24T04:02:00Z",
       "lastSeenAt": "2026-11-24T05:48:00Z",
       "deviceGroupIds": ["grp-b1", "grp-b3"],
       "sampleMessages": ["Mat ket noi khi dang tai (roi Wi-Fi cua khach hang)"],
-      "retryBudgetExhausted": false
+      "retryBudgetExhausted": true
     },
     {
       "errorCode": "STATE_TIMEOUT_DOWNLOADING",

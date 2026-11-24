@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "analysisId": "anl-20261124-0003",
+  "campaignId": "cmp-2026-1119-h660gm-w3",
+  "waveId": "wv-03",
+  "summary": {
+    "headline": "Wave wv-03 hoàn tất với 18/860 thiết bị DASAN-H660GM bị ROLLED_BACK do ERR_WATCHDOG_BOOT_TIMEOUT (2.09%).",
+    "severity": "HIGH",
+    "needsHumanAttention": true
+  },
+  "groups": [
+    {
+      "groupId": "G1",
+      "rootCauseGroup": "BOOT_VERIFY",
+      "confidence": 0.9,
+      "errorCodes": [
+        "ERR_WATCHDOG_BOOT_TIMEOUT"
+      ],
+      "statuses": [
+        "ROLLED_BACK"
+      ],
+      "model": "DASAN-H660GM",
+      "fromVersion": "2.3.0",
+      "toVersion": "2.4.1",
+      "deviceCount": 18,
+      "deviceRefs": [
+        "SN-3001",
+        "SN-3002",
+        "SN-3003",
+        "SN-3004",
+        "SN-3005",
+        "SN-3006",
+        "SN-3007",
+        "SN-3008",
+        "SN-3009",
+        "SN-3010",
+        "SN-3011",
+        "SN-3012",
+        "SN-3013",
+        "SN-3014",
+        "SN-3015",
+        "SN-3016",
+        "SN-3017",
+        "SN-3018"
+      ],
+      "evidence": [
+        "errorGroups[0].errorCode=ERR_WATCHDOG_BOOT_TIMEOUT, status=ROLLED_BACK, taskCount=18",
+        "errorGroups[0].sampleMessages báo lỗi watchdog boot bank B và kernel panic mount root fs",
+        "errorGroups[0].deviceGroupIds=[\"grp-c1\",\"grp-c2\"], lỗi xuất hiện ở cả hai nhóm vùng",
+        "stats.rolledBack=18 trên stats.tasksTerminal=860, stats.failureRatePercent=2.09"
+      ],
+      "reasoning": "18 thiết bị DASAN-H660GM nâng từ 2.3.0 lên 2.4.1 bị ROLLED_BACK với mã ERR_WATCHDOG_BOOT_TIMEOUT ở cả hai nhóm grp-c1 và grp-c2 sau 1 lượt thử. Log mẫu ghi nhận lỗi watchdog khi boot và kernel panic không mount được root fs trên bank B, nghi do lỗi ảnh firmware 2.4.1 ở bước khởi động xác minh, chưa loại trừ khác biệt lô phần cứng hoặc phân vùng trên các thiết bị này.",
+      "suggestedAction": "recommend_review_firmware"
+    }
+  ],
+  "unclassified": [],
+  "inputAnomalies": [],
+  "limitations": [
+    "Không có phân bố số lượng thiết bị lỗi chi tiết riêng cho từng nhóm grp-c1 và grp-c2.",
+    "Không có thông tin revision phần cứng hoặc trạng thái phân vùng flash của 18 thiết bị lỗi.",
+    "Log mẫu chỉ gồm 2 thông điệp đại diện, chưa rõ cả 18 thiết bị có cùng lỗi mount root fs hay không."
+  ]
+}

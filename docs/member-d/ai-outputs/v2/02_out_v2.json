@@ -1,0 +1,123 @@
+{
+  "schemaVersion": 1,
+  "analysisId": "anl-20261124-0002",
+  "campaignId": "cmp-2026-1120-h660gmv2-w1",
+  "waveId": "wv-01",
+  "summary": {
+    "headline": "Chiến dịch tạm dừng ở Wave 1 do tỷ lệ lỗi 11.72% vượt ngưỡng 5.0%, chủ yếu vì lỗi sai checksum trên cả 5 nhóm thiết bị.",
+    "severity": "HIGH",
+    "needsHumanAttention": true
+  },
+  "groups": [
+    {
+      "groupId": "G1",
+      "rootCauseGroup": "CHECKSUM_INTEGRITY",
+      "confidence": 0.85,
+      "errorCodes": [
+        "ERR_CHECKSUM_MISMATCH"
+      ],
+      "statuses": [
+        "FAILED"
+      ],
+      "model": "DASAN-H660GM-V2",
+      "fromVersion": "3.0.2",
+      "toVersion": "3.1.0",
+      "deviceCount": 68,
+      "deviceRefs": [
+        "SN-2001",
+        "SN-2002",
+        "SN-2003",
+        "SN-2004",
+        "SN-2005",
+        "SN-2006",
+        "SN-2007",
+        "SN-2008",
+        "SN-2009",
+        "SN-2010",
+        "SN-2011",
+        "SN-2012",
+        "SN-2013",
+        "SN-2014",
+        "SN-2015",
+        "SN-2016",
+        "SN-2017",
+        "SN-2018",
+        "SN-2019",
+        "SN-2020"
+      ],
+      "evidence": [
+        "errorGroups[0].errorCode=ERR_CHECKSUM_MISMATCH, taskCount=68, attemptCountMin=3, attemptCountMax=3",
+        "errorGroups[0].deviceGroupIds=[\"grp-b1\",\"grp-b2\",\"grp-b3\",\"grp-b4\",\"grp-b5\"] (cả 5 nhóm)",
+        "errorGroups[0].sampleMessages ghi nhận SHA-256 không khớp và file tải 46.8 MB thay vì 50 MB",
+        "campaign.failureThresholdPercent=5.0, stats.failureRatePercent=11.72, stats.failedFinal=72"
+      ],
+      "reasoning": "68/75 tác vụ lỗi cuối thuộc mã ERR_CHECKSUM_MISMATCH, lặp lại trên cả 5 nhóm thiết bị (grp-b1 đến grp-b5) cùng model DASAN-H660GM-V2 từ 3.0.2 lên 3.1.0 sau đủ 3 lượt thử. Nghi ngờ lỗi gói ảnh firmware hoặc file trên máy chủ phân phối bị cắt cụt (46.8 MB thay vì 50 MB), tuy chưa loại trừ hoàn toàn lỗi bộ nhớ đệm CDN.",
+      "suggestedAction": "recommend_review_firmware"
+    },
+    {
+      "groupId": "G2",
+      "rootCauseGroup": "DOWNLOAD_TRANSPORT",
+      "confidence": 0.8,
+      "errorCodes": [
+        "ERR_DOWNLOAD_INTERRUPTED"
+      ],
+      "statuses": [
+        "FAILED"
+      ],
+      "model": "DASAN-H660GM-V2",
+      "fromVersion": "3.0.2",
+      "toVersion": "3.1.0",
+      "deviceCount": 4,
+      "deviceRefs": [
+        "SN-2101",
+        "SN-2102",
+        "SN-2103",
+        "SN-2104"
+      ],
+      "evidence": [
+        "errorGroups[1].errorCode=ERR_DOWNLOAD_INTERRUPTED, status=FAILED, taskCount=4",
+        "errorGroups[1].attemptCountMin=3, attemptCountMax=3, retryBudgetExhausted=true",
+        "errorGroups[1].deviceGroupIds=[\"grp-b1\",\"grp-b3\"], mất kết nối khi đang tải"
+      ],
+      "reasoning": "Có 4 thiết bị ở grp-b1 và grp-b3 thất bại với mã ERR_DOWNLOAD_INTERRUPTED sau 3 lượt thử. Nguyên nhân có thể do kết nối đường truyền hoặc mạng phía thiết bị không ổn định trong lúc tải, chưa ghi nhận dấu hiệu lỗi diện rộng từ nhóm này.",
+      "suggestedAction": "retry_later"
+    },
+    {
+      "groupId": "G3",
+      "rootCauseGroup": "TIMEOUT_NO_HEARTBEAT",
+      "confidence": 0.75,
+      "errorCodes": [
+        "STATE_TIMEOUT_DOWNLOADING"
+      ],
+      "statuses": [
+        "TIMEOUT"
+      ],
+      "model": "DASAN-H660GM-V2",
+      "fromVersion": "3.0.2",
+      "toVersion": "3.1.0",
+      "deviceCount": 3,
+      "deviceRefs": [
+        "SN-2201",
+        "SN-2202",
+        "SN-2203"
+      ],
+      "evidence": [
+        "errorGroups[2].errorCode=STATE_TIMEOUT_DOWNLOADING, status=TIMEOUT, taskCount=3",
+        "errorGroups[2].attemptCountMin=3, attemptCountMax=3, retryBudgetExhausted=true",
+        "errorGroups[2].sampleMessages báo mất heartbeat ở trạng thái DOWNLOADING quá 15 phút"
+      ],
+      "reasoning": "Có 3 thiết bị ở grp-b2 và grp-b5 quá hạn với mã STATE_TIMEOUT_DOWNLOADING do không gửi heartbeat quá 15 phút ở cả 3 lượt thử. Có thể thiết bị mất nguồn hoặc gián đoạn kết nối quản lý trong lúc tải firmware, chưa loại trừ nghẽn đường truyền tải.",
+      "suggestedAction": "investigate"
+    }
+  ],
+  "unclassified": [],
+  "inputAnomalies": [
+    "TRUNCATED_REFS"
+  ],
+  "limitations": [
+    "Danh sách errorGroups[0].deviceRefs chỉ có 20/68 mã thiết bị nên chưa rõ 48 thiết bị còn lại.",
+    "Không có phân bố số lỗi chi tiết theo từng nhóm grp-b1 đến grp-b5 để so sánh tỷ lệ lỗi giữa các khu vực.",
+    "Không có log từ máy chủ CDN/kho firmware để xác nhận file gốc 3.1.0 bị hỏng hay bị cắt khi truyền.",
+    "Chưa biết kết quả cuối cùng của 9 tác vụ đang ở trạng thái stillActive."
+  ]
+}

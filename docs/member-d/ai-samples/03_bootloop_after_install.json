@@ -62,7 +62,7 @@
         "Watchdog: 3 lan boot loi tren bank B",
         "Kernel panic: unable to mount root fs on partition B"
       ],
-      "retryBudgetExhausted": false
+      "retryBudgetExhausted": true
     }
   ]
 }

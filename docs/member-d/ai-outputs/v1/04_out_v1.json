@@ -1,0 +1,259 @@
+{
+  "schemaVersion": 1,
+  "analysisId": "anl-20261124-0004",
+  "campaignId": "cmp-2026-1121-mixed-w1",
+  "waveId": "wv-01",
+  "summary": {
+    "headline": "Wave 1 tạm dừng ở tỷ lệ lỗi 30.75% (123/400 task kết thúc) với nhiều nhóm lỗi: gián đoạn tải, sai checksum, quá hạn cài đặt, không tương thích và quá hạn wave.",
+    "severity": "HIGH",
+    "needsHumanAttention": true
+  },
+  "groups": [
+    {
+      "groupId": "G1",
+      "rootCauseGroup": "DOWNLOAD_TRANSPORT",
+      "confidence": 0.85,
+      "errorCodes": [
+        "ERR_DOWNLOAD_INTERRUPTED"
+      ],
+      "statuses": [
+        "FAILED"
+      ],
+      "model": "DASAN-H660GM",
+      "fromVersion": "2.3.0",
+      "toVersion": "2.5.0",
+      "deviceCount": 40,
+      "deviceRefs": [
+        "SN-4001",
+        "SN-4002",
+        "SN-4003",
+        "SN-4004",
+        "SN-4005",
+        "SN-4006",
+        "SN-4007",
+        "SN-4008",
+        "SN-4009",
+        "SN-4010",
+        "SN-4011",
+        "SN-4012",
+        "SN-4013",
+        "SN-4014",
+        "SN-4015",
+        "SN-4016",
+        "SN-4017",
+        "SN-4018",
+        "SN-4019",
+        "SN-4020"
+      ],
+      "evidence": [
+        "errorGroups[0].errorCode = \"ERR_DOWNLOAD_INTERRUPTED\", status = \"FAILED\", taskCount = 40",
+        "errorGroups[0].deviceGroupIds = [\"grp-d1\", \"grp-d3\"], attemptCountMin = 1, attemptCountMax = 3, retryBudgetExhausted = true",
+        "errorGroups[0].sampleMessages[0] = \"Mat ket noi khi dang tai, thu lai 3 lan van loi\""
+      ],
+      "reasoning": "Có 40 task thất bại với mã ERR_DOWNLOAD_INTERRUPTED tại hai nhóm grp-d1 và grp-d3, đã cạn lượt thử lại (tối đa 3 lần). Nghi do sự cố đường truyền mạng hoặc kết nối tới máy chủ tải tại các khu vực này trong khung giờ 10:03–11:20Z, nhưng chưa loại trừ quá tải băng thông cục bộ.",
+      "suggestedAction": "escalate_to_network_team"
+    },
+    {
+      "groupId": "G2",
+      "rootCauseGroup": "CHECKSUM_INTEGRITY",
+      "confidence": 0.85,
+      "errorCodes": [
+        "ERR_CHECKSUM_MISMATCH"
+      ],
+      "statuses": [
+        "FAILED"
+      ],
+      "model": "DASAN-H660GM",
+      "fromVersion": "2.3.0",
+      "toVersion": "2.5.0",
+      "deviceCount": 22,
+      "deviceRefs": [
+        "SN-4101",
+        "SN-4102",
+        "SN-4103",
+        "SN-4104",
+        "SN-4105",
+        "SN-4106",
+        "SN-4107",
+        "SN-4108",
+        "SN-4109",
+        "SN-4110",
+        "SN-4111",
+        "SN-4112",
+        "SN-4113",
+        "SN-4114",
+        "SN-4115",
+        "SN-4116",
+        "SN-4117",
+        "SN-4118",
+        "SN-4119",
+        "SN-4120"
+      ],
+      "evidence": [
+        "errorGroups[1].errorCode = \"ERR_CHECKSUM_MISMATCH\", status = \"FAILED\", taskCount = 22",
+        "errorGroups[1].deviceGroupIds = [\"grp-d2\"], attemptCountMin = 2, attemptCountMax = 3, retryBudgetExhausted = true",
+        "errorGroups[1].sampleMessages[0] = \"SHA-256 khong khop, bo file\"",
+        "stats.success = 277, firmware.targetModel = \"DASAN-H660GM\", firmware.toVersion = \"2.5.0\""
+      ],
+      "reasoning": "Có 22 task báo ERR_CHECKSUM_MISMATCH (SHA-256 không khớp) sau 2–3 lần thử, chỉ tập trung tại nhóm grp-d2. Vì đã có 277 task cùng model DASAN-H660GM lên 2.5.0 thành công, ít khả năng ảnh firmware gốc bị hỏng; nghi lỗi bộ nhớ đệm CDN hoặc đường truyền tại vùng grp-d2, chưa loại trừ lỗi phân phối cục bộ.",
+      "suggestedAction": "investigate"
+    },
+    {
+      "groupId": "G3",
+      "rootCauseGroup": "INSTALL_FLASH",
+      "confidence": 0.65,
+      "errorCodes": [
+        "STATE_TIMEOUT_INSTALLING"
+      ],
+      "statuses": [
+        "TIMEOUT"
+      ],
+      "model": "DASAN-H660GM",
+      "fromVersion": "2.3.0",
+      "toVersion": "2.5.0",
+      "deviceCount": 15,
+      "deviceRefs": [
+        "SN-4201",
+        "SN-4202",
+        "SN-4203",
+        "SN-4204",
+        "SN-4205",
+        "SN-4206",
+        "SN-4207",
+        "SN-4208",
+        "SN-4209",
+        "SN-4210",
+        "SN-4211",
+        "SN-4212",
+        "SN-4213",
+        "SN-4214",
+        "SN-4215"
+      ],
+      "evidence": [
+        "errorGroups[2].errorCode = \"STATE_TIMEOUT_INSTALLING\", status = \"TIMEOUT\", taskCount = 15",
+        "errorGroups[2].deviceGroupIds = [\"grp-d1\"], attemptCountMin = 1, attemptCountMax = 3, retryBudgetExhausted = true",
+        "errorGroups[2].sampleMessages[0] = \"Khong nhan duoc heartbeat sau khi o trang thai INSTALLING qua 10 phut\""
+      ],
+      "reasoning": "Có 15 task tại nhóm grp-d1 bị TIMEOUT ở mã STATE_TIMEOUT_INSTALLING do không nhận được heartbeat quá 10 phút, đã hết lượt thử lại. Có thể thiết bị gặp lỗi hoặc treo khi ghi flash sang bank B, nhưng chưa loại trừ khả năng mất kết nối quản lý tại grp-d1 (nơi cũng ghi nhận lỗi gián đoạn tải).",
+      "suggestedAction": "investigate"
+    },
+    {
+      "groupId": "G4",
+      "rootCauseGroup": "COMPATIBILITY",
+      "confidence": 0.95,
+      "errorCodes": [
+        "INCOMPATIBLE"
+      ],
+      "statuses": [
+        "FAILED"
+      ],
+      "model": "DASAN-H660GM",
+      "fromVersion": "2.1.0",
+      "toVersion": "2.5.0",
+      "deviceCount": 9,
+      "deviceRefs": [
+        "SN-4301",
+        "SN-4302",
+        "SN-4303",
+        "SN-4304",
+        "SN-4305",
+        "SN-4306",
+        "SN-4307",
+        "SN-4308",
+        "SN-4309"
+      ],
+      "evidence": [
+        "errorGroups[3].errorCode = \"INCOMPATIBLE\", status = \"FAILED\", taskCount = 9, fromVersion = \"2.1.0\"",
+        "firmware.minRequiredVersion = \"2.3.0\", firmware.fromVersion = \"2.3.0\", firmware.toVersion = \"2.5.0\"",
+        "errorGroups[3].sampleMessages[0] = \"Server tu choi giao task: versionCode < minRequiredVersionCode\""
+      ],
+      "reasoning": "Có 9 thiết bị tại nhóm grp-d3 bị từ chối ngay lượt đầu (attemptCountMax = 1, retryBudgetExhausted = false) với mã INCOMPATIBLE do đang chạy fromVersion 2.1.0, thấp hơn mức minRequiredVersion 2.3.0 của gói firmware 2.5.0. Nghi do bộ lọc chọn thiết bị đầu vào của chiến dịch bao gồm nhầm thiết bị phiên bản cũ.",
+      "suggestedAction": "investigate"
+    },
+    {
+      "groupId": "G5",
+      "rootCauseGroup": "WAVE_DEADLINE",
+      "confidence": 0.95,
+      "errorCodes": [
+        "WAVE_DEADLINE_EXCEEDED"
+      ],
+      "statuses": [
+        "TIMEOUT"
+      ],
+      "model": "DASAN-H660GM",
+      "fromVersion": "2.3.0",
+      "toVersion": "2.5.0",
+      "deviceCount": 31,
+      "deviceRefs": [
+        "SN-4401",
+        "SN-4402",
+        "SN-4403",
+        "SN-4404",
+        "SN-4405",
+        "SN-4406",
+        "SN-4407",
+        "SN-4408",
+        "SN-4409",
+        "SN-4410",
+        "SN-4411",
+        "SN-4412",
+        "SN-4413",
+        "SN-4414",
+        "SN-4415",
+        "SN-4416",
+        "SN-4417",
+        "SN-4418",
+        "SN-4419",
+        "SN-4420"
+      ],
+      "evidence": [
+        "errorGroups[4].errorCode = \"WAVE_DEADLINE_EXCEEDED\", status = \"TIMEOUT\", taskCount = 31",
+        "errorGroups[4].firstSeenAt = \"2026-11-24T11:23:00Z\", campaign.waveDeadlineAt = \"2026-11-24T11:22:00Z\", campaign.maxConcurrentDevices = 200",
+        "errorGroups[4].sampleMessages[0] = \"Wave da qua han chot deadlineAt khi task chua bat dau\", retryBudgetExhausted = false"
+      ],
+      "reasoning": "Có 31 task tại grp-d2 và grp-d3 bị TIMEOUT với mã WAVE_DEADLINE_EXCEEDED lúc 11:23:00Z (sau hạn waveDeadlineAt 11:22:00Z) khi chưa bắt đầu thực thi. Có thể hàng đợi bị nghẽn bởi giới hạn maxConcurrentDevices = 200 và thời gian chờ retry của các task lỗi trước đó, chưa phải lỗi bản thân thiết bị.",
+      "suggestedAction": "retry_later"
+    },
+    {
+      "groupId": "G6",
+      "rootCauseGroup": "UNKNOWN",
+      "confidence": 0.2,
+      "errorCodes": [
+        "UNKNOWN"
+      ],
+      "statuses": [
+        "FAILED"
+      ],
+      "model": "DASAN-H660GM",
+      "fromVersion": "2.3.0",
+      "toVersion": "2.5.0",
+      "deviceCount": 6,
+      "deviceRefs": [
+        "SN-4501",
+        "SN-4502",
+        "SN-4503",
+        "SN-4504",
+        "SN-4505",
+        "SN-4506"
+      ],
+      "evidence": [
+        "errorGroups[5].errorCode = \"UNKNOWN\", status = \"FAILED\", taskCount = 6",
+        "errorGroups[5].deviceGroupIds = [\"grp-d1\", \"grp-d2\"], attemptCountMin = 3, attemptCountMax = 3, retryBudgetExhausted = true",
+        "errorGroups[5].sampleMessages[0] = \"Thiet bi bao FAILED nhung khong gui errorCode\""
+      ],
+      "reasoning": "Có 6 thiết bị tại grp-d1 và grp-d2 báo FAILED sau đủ 3 lượt thử nhưng không gửi mã lỗi cụ thể (errorCode = UNKNOWN). Dữ liệu đầu vào hiện không đủ để xác định lỗi xảy ra ở bước tải, ghi flash hay kiểm tra khởi động, cần thu thập thêm log chi tiết từ thiết bị và máy chủ.",
+      "suggestedAction": "collect_more_evidence"
+    }
+  ],
+  "unclassified": [],
+  "inputAnomalies": [
+    "TRUNCATED_REFS",
+    "UNKNOWN_ERROR_CODES"
+  ],
+  "limitations": [
+    "Danh sách deviceRefs bị cắt ngắn ở tối đa 20 mã cho các nhóm ERR_DOWNLOAD_INTERRUPTED (20/40), ERR_CHECKSUM_MISMATCH (20/22) và WAVE_DEADLINE_EXCEEDED (20/31).",
+    "Nhóm lỗi UNKNOWN (6 thiết bị) không gửi mã lỗi chi tiết và không có log thiết bị đi kèm để xác định bước xảy ra lỗi.",
+    "Không có thông tin về tình trạng kết nối hiện tại của 15 thiết bị bị STATE_TIMEOUT_INSTALLING cũng như kết quả cuối cùng của 26 task đang ở trạng thái stillActive.",
+    "Không có dữ liệu về hạ tầng CDN hoặc máy chủ tải file theo từng vùng để phân biệt lỗi đường truyền với lỗi bộ nhớ đệm tại nhóm grp-d2."
+  ]
+}
