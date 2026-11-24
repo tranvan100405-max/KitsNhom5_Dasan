@@ -178,25 +178,32 @@ head("D", "THỜI GIAN HOÀN TẤT CAMPAIGN 50 000 THIẾT BỊ — TÍNH THEO T
 D_rate = SLOTS * SPEED / FW_MB            # lượt tải/giây = 50
 print(f"  Năng lực tải : D = SLOTS x SPEED / FW = {N(SLOTS)} x {F(SPEED, 1)} / {F(FW_MB, 0)} "
       f"= {F(D_rate)} lượt tải/giây")
+C0 = D_rate * CHECKIN_S                   # năng lực tải trong 1 chu kỳ check-in = 15 000 máy
+print(f"  Năng lực trong 1 chu kỳ check-in: C0 = D x T_checkin = {F(D_rate)} x {N(CHECKIN_S)} = {N(C0)} máy")
 print("  Công thức mỗi wave:")
-print("    T_tải_xong = max(T_khám_phá, N/D) + 10 s (+ T_chờ_retry nếu N/D > chu kỳ check-in)")
+print("    T_tải_xong = max(T_khám_phá, N/D) + 10 s + (T_checkin nếu N > C0)")
 print("    T_phase    = T_tải_xong + T_cài/verify")
 print("    T_wave     = max(T_phase, hạn_chót_của_wave) + soak   (chỉ chờ hạn chót khi còn thiết bị OFFLINE)")
+print()
+print("  Giải thích số hạng '(T_checkin nếu N > C0)': mỗi máy chỉ check-in 1 lần/chu kỳ; nếu số máy của")
+print("  wave vượt C0 thì phần dôi ra bị từ chối slot và phải chờ tới vòng check-in KẾ TIẾP -> cộng 1 chu kỳ")
+print("  (300 s) cho máy cuối. Đây là CẬN TRÊN; nếu server trả 'thử lại sau 60 s' cho máy bị từ chối thì")
+print("  số hạng này còn ~60 s. Cả hai đều không đổi kết luận vì tổng thời gian bị soak/hạn chót chi phối.")
 print()
 print("  Giả định then chốt: slot CHỈ bị giữ lúc DOWNLOADING (Q6) -> cài/verify các máy chạy SONG SONG,")
 print("  không chiếm slot; vì vậy tải+cài nhanh hơn nhiều so với cảm giác '500 slot chia 50 000 máy'.")
 
 
-def wave_rows(disc, retry_tail, install, offline, grace_h):
+def wave_rows(disc, install, offline, grace_h, overflow_wait):
     rows = []
     for i in range(4):
         n = inc[i]
         base = n / D_rate
-        tail = retry_tail if base > CHECKIN_S else 0.0
-        dl = max(disc, base) + 10.0 + tail
+        overflow = overflow_wait if n > C0 else 0.0
+        dl = max(disc, base) + 10.0 + overflow
         phase = dl + install
         wait = max(0.0, grace_h * 3600.0 - phase) if offline else 0.0
-        rows.append(dict(n=n, disc=disc, tail=tail, dl=dl, install=install,
+        rows.append(dict(n=n, disc=disc, overflow=overflow, dl=dl, install=install,
                          phase=phase, wait=wait, soak=SOAK_H[i], wall=phase + wait))
     return rows
 
@@ -214,20 +221,20 @@ def print_wave_table(rows):
 
 
 SCEN = [
-    ("TỐT NHẤT — lý tưởng: 0% OFFLINE, cài nhanh, không retry",
-     dict(disc=300.0, retry_tail=0.0, install=60.0, offline=False, grace_h=0.0, mode="serial")),
+    ("TỐT NHẤT — lý thuyết: 0% OFFLINE, điều phối hoàn hảo, cài nhanh",
+     dict(disc=300.0, install=60.0, offline=False, grace_h=0.0, overflow_wait=0.0, mode="serial")),
     ("THỰC TẾ — chỉ chọn thiết bị ONLINE (không có straggler)",
-     dict(disc=330.0, retry_tail=150.0, install=INSTALL_REAL, offline=False, grace_h=0.0, mode="serial")),
-    ("THỰC TẾ — tuân thủ Q7: 5% OFFLINE, chờ hạn chót 1 h mỗi wave",
-     dict(disc=330.0, retry_tail=150.0, install=INSTALL_REAL, offline=True, grace_h=GRACE_H, mode="serial")),
+     dict(disc=330.0, install=INSTALL_REAL, offline=False, grace_h=0.0, overflow_wait=CHECKIN_S, mode="serial")),
+    ("THỰC TẾ (ĐỀ XUẤT 1 h) — KHÁC mặc định 24 h của Q7",
+     dict(disc=330.0, install=INSTALL_REAL, offline=True, grace_h=GRACE_H, overflow_wait=CHECKIN_S, mode="serial")),
     ("THỰC TẾ + TỐI ƯU — promotion ở 95%, straggler chạy song song",
-     dict(disc=330.0, retry_tail=150.0, install=INSTALL_REAL, offline=True, grace_h=GRACE_H, mode="parallel")),
-    ("XẤU NHẤT — giữ waveDeadline mặc định 24 h (Q7)",
-     dict(disc=600.0, retry_tail=300.0, install=T_INSTALL + T_VERIFY, offline=True, grace_h=DEADLINE_H, mode="serial")),
+     dict(disc=330.0, install=INSTALL_REAL, offline=True, grace_h=GRACE_H, overflow_wait=CHECKIN_S, mode="parallel")),
+    ("ĐÚNG MẶC ĐỊNH Q7 — waveDeadline 24 h (literal Q7, xấu nhất)",
+     dict(disc=600.0, install=T_INSTALL + T_VERIFY, offline=True, grace_h=DEADLINE_H, overflow_wait=0.0, mode="serial")),
 ]
 summary = []
 for name, sc in SCEN:
-    rows = wave_rows(sc["disc"], sc["retry_tail"], sc["install"], sc["offline"], sc["grace_h"])
+    rows = wave_rows(sc["disc"], sc["install"], sc["offline"], sc["grace_h"], sc["overflow_wait"])
     print(name)
     total_h = print_wave_table(rows)
     exec_min = sum(r["phase"] for r in rows) / 60.0
@@ -243,9 +250,14 @@ for name, sc in SCEN:
 
 print("  BẢNG TỔNG HỢP 5 KỊCH BẢN:")
 for name, e, t in summary:
-    print(f"    - {name:<66} exec {F(e):>8} phút | tổng {F(t, 2):>7} h")
+    print(f"    - {name:<70} exec {F(e):>8} phút | tổng {F(t, 2):>7} h")
 print()
-print("  PHÂN RÃ THỜI GIAN KỊCH BẢN 'THỰC TẾ - Q7' (tổng 8,00 h):")
+print("  LƯU Ý NHÃN KỊCH BẢN (quan trọng khi bảo vệ):")
+print("    - Q7 quy định waveDeadline MẶC ĐỊNH = 24 h. Đúng nguyên văn Q7 -> tổng = 100,00 h.")
+print("    - Con số 8,00 h (và 5,81 h) chỉ đạt được khi ĐỔI hạn chót xuống 1 h. Đó là ĐỀ XUẤT của D,")
+print("      KHÁC mặc định Q7, phải được cả nhóm/campaign owner CHỐT trước khi đưa lên slide.")
+print()
+print("  PHÂN RÃ THỜI GIAN KỊCH BẢN 'THỰC TẾ (ĐỀ XUẤT 1 h)' (tổng 8,00 h):")
 print(f"    - soak 2 wave x 2 h            = 4,00 h (50%)")
 print(f"    - chờ hạn chót straggler 4 wave = 4,00 h (50%)")
 print("    - tải + cài thực tế nằm LỌT trong thời gian chờ nên gần như không cộng thêm")
@@ -261,8 +273,9 @@ print(f"        {N(TARGET)} / {N(SLOTS)} x 3,2 phút = {F(hold_min)} phút = {F(
 print(f"    (c) Thực thi theo mô hình này (4 wave, tải+cài):")
 for name, e, t in summary:
     print(f"        {name:<66} {F(e):>8} phút")
-print("    => '2-3 giờ' không khớp (a) cũng không khớp (b): nó là kết quả của giả định giữ slot")
-print("       suốt quá trình cài (trái Q6) và bỏ qua soak 4 h + straggler OFFLINE.")
+print("    => '2-3 giờ' không tái lập được từ chính các giả định của §4: muốn ra 2-3 h phải giữ slot")
+print("       suốt lúc cài (trái Q6); còn nếu tính đủ soak + straggler thì > 4,5 h. Đây là ước tính")
+print("       CHƯA HIỆU CHỈNH, cần cập nhật lại Specification §4 (việc của người giữ spec).")
 
 # =====================================================================
 # E. TĂNG TRƯỞNG DỮ LIỆU
@@ -382,10 +395,13 @@ assert abs(peak_mbs - 2500) < 1e-9
 assert abs(gbps - 20) < 1e-9
 assert abs(total_gb - 2500) < 1e-9
 assert abs(D_rate - 50) < 1e-9
-assert abs(summary[0][2] - 1780 / 3600 - 4.0) < 1e-9     # tốt nhất
-assert abs(summary[1][2] - 2620 / 3600 - 4.0) < 1e-9     # online-only
-assert abs(summary[2][2] - 8.0) < 1e-9                   # Q7, grace 1h
-assert abs(summary[4][2] - 100.0) < 1e-9                 # xấu nhất, deadline 24h
+assert abs(C0 - 15000) < 1e-9
+assert abs(summary[0][2] - 1780 / 3600 - 4.0) < 1e-9     # tốt nhất (lower bound)
+assert abs(summary[1][1] - 2920 / 60) < 1e-9             # exec online-only = 48,67 phút
+assert abs(summary[1][2] - 2920 / 3600 - 4.0) < 1e-9     # online-only
+assert abs(summary[2][2] - 8.0) < 1e-9                   # đề xuất hạn chót 1h (KHÁC mặc định Q7)
+assert abs(summary[3][2] - (2920 / 3600 + 4.0 + 1.0)) < 1e-9   # tối ưu
+assert abs(summary[4][2] - 100.0) < 1e-9                 # đúng mặc định Q7 (24h)
 assert abs(tasks_y - 500000) < 1e-9
 assert abs(audit_y - 2500000) < 1e-9
 print("  [OK] RPS trung bình 333,33 | kích thước wave | 20 Gbps | 2 500 GB | D = 50 lượt/s")
