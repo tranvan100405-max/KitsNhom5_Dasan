@@ -1,0 +1,130 @@
+erDiagram
+    members ||--o{ firmware_versions : uploads
+    members ||--o{ firmware_versions : approves
+    members ||--o{ campaigns : creates
+    members o|--o{ audit_logs : records
+
+    device_groups ||--o{ devices : contains
+    device_groups ||--o{ campaigns : targeted_by
+
+    firmware_versions ||--o{ campaigns : deployed_in
+    firmware_versions ||--o{ devices : current_firmware
+    firmware_versions ||--o{ device_tasks : from_firmware
+    firmware_versions ||--o{ device_tasks : to_firmware
+    firmware_versions ||--o{ device_firmware_histories : installed_as
+
+    campaigns ||--o{ campaign_waves : has_many
+    campaigns ||--o{ device_tasks : has_tasks
+
+    campaign_waves ||--o{ device_tasks : schedules
+
+    devices ||--o{ device_tasks : executes
+    devices ||--o{ device_firmware_histories : tracks
+
+    device_tasks ||--o{ device_firmware_histories : produces
+
+    members {
+        uuid id PK
+        string email UK
+        string name
+        enum role
+        datetime createdAt
+    }
+
+    device_groups {
+        uuid id PK
+        string name
+        string customerName
+        string region
+        string timezone
+        string maintenanceWindow
+    }
+
+    devices {
+        uuid id PK
+        string serialNo UK
+        string model
+        enum deviceType
+        uuid groupId FK
+        uuid currentFirmwareId FK
+        enum connectivity
+        datetime lastCheckInAt
+        string activePartition
+    }
+
+    firmware_versions {
+        uuid id PK
+        string model
+        string versionNo
+        int versionCode
+        text releaseNotes
+        string checksum
+        string fileUrl
+        string minRequiredVersion
+        int minRequiredVersionCode
+        enum status
+        uuid uploadedBy FK
+        uuid approvedBy FK
+        datetime createdAt
+    }
+
+    campaigns {
+        uuid id PK
+        string name
+        uuid firmwareId FK
+        uuid targetGroupId FK
+        enum status
+        decimal failureThresholdPercent
+        int maxConcurrentDevices
+        uuid createdBy FK
+        datetime scheduledAt
+        datetime startedAt
+        datetime finishedAt
+    }
+
+    campaign_waves {
+        uuid id PK
+        uuid campaignId FK
+        int waveOrder
+        decimal rolloutPercentage
+        decimal minSuccessRateToProceed
+        enum status
+        datetime deadlineAt
+        datetime startedAt
+        datetime finishedAt
+    }
+
+    device_tasks {
+        uuid id PK
+        uuid campaignId FK
+        uuid waveId FK
+        uuid deviceId FK
+        uuid fromFirmwareId FK
+        uuid toFirmwareId FK
+        enum status
+        int attemptCount
+        string errorCode
+        text errorMessage
+        datetime startedAt
+        datetime finishedAt
+        datetime lastHeartbeatAt
+    }
+
+    device_firmware_histories {
+        uuid id PK
+        uuid deviceId FK
+        uuid firmwareId FK
+        uuid taskId FK
+        datetime installedAt
+    }
+
+    audit_logs {
+        uuid id PK
+        uuid actorId FK
+        enum actorType
+        string action
+        string targetType
+        string targetId
+        json detail
+        datetime createdAt
+    }
