@@ -1,130 +1,130 @@
 erDiagram
-    members ||--o{ firmware_versions : uploads
-    members ||--o{ firmware_versions : approves
-    members ||--o{ campaigns : creates
-    members o|--o{ audit_logs : records
+    members ||--o{ firmware_versions : "uploads (uploadedBy)"
+    members o|--o{ firmware_versions : "approves (approvedBy)"
+    members ||--o{ campaigns : "creates"
+    members o|--o{ audit_logs : "records (actorType=MEMBER)"
 
-    device_groups ||--o{ devices : contains
-    device_groups ||--o{ campaigns : targeted_by
+    device_groups ||--o{ devices : "contains"
+    device_groups ||--o{ campaigns : "targeted_by"
 
-    firmware_versions ||--o{ campaigns : deployed_in
-    firmware_versions ||--o{ devices : current_firmware
-    firmware_versions ||--o{ device_tasks : from_firmware
-    firmware_versions ||--o{ device_tasks : to_firmware
-    firmware_versions ||--o{ device_firmware_histories : installed_as
+    firmware_versions ||--o{ campaigns : "deployed_in"
+    firmware_versions o|--o{ devices : "current_firmware"
+    firmware_versions ||--o{ device_tasks : "from_firmware"
+    firmware_versions ||--o{ device_tasks : "to_firmware"
+    firmware_versions ||--o{ device_firmware_histories : "installed_as"
 
-    campaigns ||--o{ campaign_waves : has_many
-    campaigns ||--o{ device_tasks : has_tasks
+    campaigns ||--o{ campaign_waves : "has_many"
+    campaigns ||--o{ device_tasks : "has_tasks"
 
-    campaign_waves ||--o{ device_tasks : schedules
+    campaign_waves ||--o{ device_tasks : "schedules"
 
-    devices ||--o{ device_tasks : executes
-    devices ||--o{ device_firmware_histories : tracks
+    devices ||--o{ device_tasks : "executes"
+    devices ||--o{ device_firmware_histories : "tracks"
 
-    device_tasks ||--o{ device_firmware_histories : produces
+    device_tasks ||--o| device_firmware_histories : "produces (0..1 on SUCCESS)"
 
     members {
         uuid id PK
-        string email UK
-        string name
-        enum role
-        datetime createdAt
+        string email UK "NOT NULL"
+        string name "NOT NULL"
+        enum role "ADMIN | DEVELOPER | QA | OPERATOR"
+        datetime createdAt "NOT NULL"
     }
 
     device_groups {
         uuid id PK
-        string name
-        string customerName
-        string region
-        string timezone
-        string maintenanceWindow
+        string name "NOT NULL"
+        string customerName "NOT NULL"
+        string region "NOT NULL"
+        string timezone "NULL, IANA tz"
+        string maintenanceWindow "NULL, e.g. 01:00-05:00"
     }
 
     devices {
         uuid id PK
-        string serialNo UK
-        string model
-        enum deviceType
-        uuid groupId FK
-        uuid currentFirmwareId FK
-        enum connectivity
-        datetime lastCheckInAt
-        string activePartition
+        string serialNo UK "NOT NULL"
+        string model "NOT NULL"
+        enum deviceType "SWITCH | ROUTER | ONT | ONU"
+        uuid groupId FK "NOT NULL"
+        uuid currentFirmwareId FK "NULL"
+        enum connectivity "ONLINE | OFFLINE"
+        datetime lastCheckInAt "NULL"
+        enum activePartition "NULL, A | B"
     }
 
     firmware_versions {
         uuid id PK
-        string model
-        string versionNo
-        int versionCode
-        text releaseNotes
-        string checksum
-        string fileUrl
-        string minRequiredVersion
-        int minRequiredVersionCode
-        enum status
-        uuid uploadedBy FK
-        uuid approvedBy FK
-        datetime createdAt
+        string model "NOT NULL, UK(model,versionNo)"
+        string versionNo "NOT NULL, UK(model,versionNo)"
+        int versionCode "NOT NULL, e.g. 20401"
+        text releaseNotes "NULL"
+        string checksum "NOT NULL, SHA-256"
+        string fileUrl "NOT NULL"
+        string minRequiredVersion "NOT NULL"
+        int minRequiredVersionCode "NOT NULL, <= versionCode"
+        enum status "UPLOADED | APPROVED | DEPRECATED"
+        uuid uploadedBy FK "NOT NULL"
+        uuid approvedBy FK "NULL, <> uploadedBy"
+        datetime createdAt "NOT NULL"
     }
 
     campaigns {
         uuid id PK
-        string name
-        uuid firmwareId FK
-        uuid targetGroupId FK
-        enum status
-        decimal failureThresholdPercent
-        int maxConcurrentDevices
-        uuid createdBy FK
-        datetime scheduledAt
-        datetime startedAt
-        datetime finishedAt
+        string name "NOT NULL"
+        uuid firmwareId FK "NOT NULL"
+        uuid targetGroupId FK "NOT NULL"
+        enum status "DRAFT | SCHEDULED | RUNNING | PAUSED | COMPLETED | ABORTED"
+        decimal failureThresholdPercent "NOT NULL"
+        int maxConcurrentDevices "NOT NULL"
+        uuid createdBy FK "NOT NULL"
+        datetime scheduledAt "NULL"
+        datetime startedAt "NULL"
+        datetime finishedAt "NULL"
     }
 
     campaign_waves {
         uuid id PK
-        uuid campaignId FK
-        int waveOrder
-        decimal rolloutPercentage
-        decimal minSuccessRateToProceed
-        enum status
-        datetime deadlineAt
-        datetime startedAt
-        datetime finishedAt
+        uuid campaignId FK "NOT NULL, UK(campaignId,waveOrder)"
+        int waveOrder "NOT NULL, 1..N"
+        decimal rolloutPercentage "NOT NULL, cumulative 1/10/50/100"
+        decimal minSuccessRateToProceed "NOT NULL, default 95%"
+        enum status "PENDING | RUNNING | PAUSED | COMPLETED"
+        datetime deadlineAt "NULL until RUNNING (+24h)"
+        datetime startedAt "NULL"
+        datetime finishedAt "NULL"
     }
 
     device_tasks {
         uuid id PK
-        uuid campaignId FK
-        uuid waveId FK
-        uuid deviceId FK
-        uuid fromFirmwareId FK
-        uuid toFirmwareId FK
-        enum status
-        int attemptCount
-        string errorCode
-        text errorMessage
-        datetime startedAt
-        datetime finishedAt
-        datetime lastHeartbeatAt
+        uuid campaignId FK "NOT NULL"
+        uuid waveId FK "NOT NULL"
+        uuid deviceId FK "NOT NULL, Partial UK active task"
+        uuid fromFirmwareId FK "NOT NULL"
+        uuid toFirmwareId FK "NOT NULL"
+        enum status "PENDING | DOWNLOADING | INSTALLING | VERIFYING | SUCCESS | FAILED | TIMEOUT | ROLLED_BACK"
+        int attemptCount "NOT NULL"
+        string errorCode "NULL"
+        text errorMessage "NULL"
+        datetime startedAt "NULL"
+        datetime finishedAt "NULL"
+        datetime lastHeartbeatAt "NULL"
     }
 
     device_firmware_histories {
         uuid id PK
-        uuid deviceId FK
-        uuid firmwareId FK
-        uuid taskId FK
-        datetime installedAt
+        uuid deviceId FK "NOT NULL"
+        uuid firmwareId FK "NOT NULL"
+        uuid taskId UK "FK, NOT NULL, 1:0..1"
+        datetime installedAt "NOT NULL"
     }
 
     audit_logs {
         uuid id PK
-        uuid actorId FK
-        enum actorType
-        string action
-        string targetType
-        string targetId
-        json detail
-        datetime createdAt
+        uuid actorId FK "NULL when SYSTEM or DEVICE"
+        enum actorType "MEMBER | SYSTEM | DEVICE"
+        string action "NOT NULL"
+        string targetType "NOT NULL"
+        string targetId "NOT NULL"
+        json detail "NULL"
+        datetime createdAt "NOT NULL"
     }

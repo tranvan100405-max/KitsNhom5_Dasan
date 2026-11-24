@@ -7,27 +7,36 @@ sequenceDiagram
     participant Storage as Firmware Storage
     participant DB as Database
     actor QA
+    actor Admin
 
-    Dev->>UI: Upload firmware + metadata + SHA-256
+    Dev->>UI: Upload firmware file + metadata + SHA-256
     UI->>API: POST /api/firmware
-    API->>API: Authenticate & check DEVELOPER role
-    API->>FS: Validate firmware
+    API->>API: Authenticate and check DEVELOPER role
+    API->>FS: uploadFirmware(file, metadata, Dev.id)
 
-    FS->>FS: Calculate SHA-256 from file
-    FS->>FS: Validate checksum and model
+    FS->>FS: Validate version range (minRequiredVersionCode <= versionCode)
+    FS->>DB: Check duplicate (model, versionNo)
+    DB-->>FS: Existing count
+    FS->>FS: Calculate SHA-256 & validate supported model
 
-    alt Invalid checksum or unsupported model
+    alt Invalid version range, unsupported model, or SHA-256 mismatch
         FS-->>API: Validation failed
         API-->>UI: 400 Bad Request
         UI-->>Dev: Reject upload
-    else Validation successful
+    else Duplicate (model, versionNo) already exists
+        FS-->>API: Duplicate firmware version
+        API-->>UI: 409 Conflict
+        UI-->>Dev: Reject duplicate version
+    else All upload validations passed
         FS->>Storage: Store firmware file
         Storage-->>FS: Return fileUrl
 
-        FS->>DB: INSERT firmware_versions
+        FS->>DB: BEGIN; INSERT firmware_versions
         Note right of DB: status = UPLOADED<br/>uploadedBy = Dev.id
+        FS->>DB: INSERT audit_logs (FIRMWARE_UPLOADED)
+        Note right of DB: actorType = MEMBER, actorId = Dev.id
+        DB-->>FS: COMMIT transaction
 
-        DB-->>FS: Firmware created
         FS-->>API: Upload successful
         API-->>UI: 201 Created
         UI-->>Dev: Waiting for QA approval
@@ -35,25 +44,53 @@ sequenceDiagram
 
     QA->>UI: Review pending firmware
     UI->>API: PATCH /api/firmware/{id}/approve
-    API->>API: Authenticate & check QA role
-    API->>DB: Get firmware information
-    DB-->>API: uploadedBy, status, model, version
+    API->>API: Authenticate and check QA role
+    API->>FS: approveFirmware(firmwareId, QA.id)
+    FS->>DB: SELECT uploadedBy, status FROM firmware_versions
+    DB-->>FS: Firmware information
 
-    alt QA is the original uploader
-        API-->>UI: 403 Forbidden
+    alt QA is the original uploader (uploadedBy == QA.id)
+        FS->>DB: INSERT audit_logs (FIRMWARE_APPROVAL_DENIED)
+        FS-->>API: Four-eyes rule violation
+        API-->>UI: 403 Forbidden (FOUR_EYES_VIOLATION)
         UI-->>QA: Cannot approve own firmware
-    else Firmware is not in UPLOADED state
-        API-->>UI: 409 Conflict
+    else Firmware status is not UPLOADED
+        FS-->>API: Invalid firmware state
+        API-->>UI: 409 Conflict (INVALID_STATE)
         UI-->>QA: Firmware cannot be approved
-    else Four-eyes rule satisfied
-        API->>DB: UPDATE firmware_versions
-        Note right of DB: status = APPROVED<br/>approvedBy = QA.id
+    else Four-eyes rule & state satisfied
+        FS->>DB: BEGIN; UPDATE firmware_versions
+        Note right of DB: status = APPROVED, approvedBy = QA.id<br/>DB CHECK: uploadedBy <> approvedBy
+        FS->>DB: INSERT audit_logs (FIRMWARE_APPROVED)
+        Note right of DB: actorType = MEMBER, actorId = QA.id
+        DB-->>FS: COMMIT transaction
 
-        API->>DB: INSERT audit_logs
-        DB-->>API: Transaction committed
-
+        FS-->>API: Approval successful
         API-->>UI: 200 OK
         UI-->>QA: Firmware approved
     end
 
-    Note over API,DB: APPROVED firmware can be selected<br/>for campaigns after compatibility checks
+    Note over API,DB: APPROVED firmware can be selected for campaigns<br/>only after compatibility checks
+
+    opt ADMIN deprecates a faulty firmware
+        Admin->>UI: Deprecate firmware
+        UI->>API: PATCH /api/firmware/{id}/deprecate
+        API->>API: Authenticate and check ADMIN role
+        API->>FS: deprecateFirmware(firmwareId, Admin.id)
+        FS->>DB: SELECT status FROM firmware_versions
+        DB-->>FS: Current firmware status
+
+        alt Firmware is not APPROVED (e.g. UPLOADED or already DEPRECATED)
+            FS-->>API: Invalid firmware state
+            API-->>UI: 409 Conflict
+            UI-->>Admin: Firmware cannot be deprecated
+        else Firmware is APPROVED
+            FS->>DB: BEGIN; UPDATE firmware_versions SET status = DEPRECATED
+            FS->>DB: INSERT audit_logs (FIRMWARE_DEPRECATED)
+            Note right of DB: actorType = MEMBER, actorId = Admin.id
+            DB-->>FS: COMMIT transaction
+            FS-->>API: Deprecation successful
+            API-->>UI: 200 OK
+            UI-->>Admin: Firmware deprecated
+        end
+    end
